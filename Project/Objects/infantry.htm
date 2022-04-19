@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\infantry.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\infantry.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Sun Apr 17 17:03:22 2022
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Mon Apr 18 14:19:56 2022
 <BR><P>
 <H3>Maximum Stack Usage =        280 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -558,14 +558,14 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[80]"></a>__aeabi_dadd</STRONG> (Thumb, 322 bytes, Stack size 48 bytes, dadd.o(.text), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_lasr
+<BR><BR>[Calls]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_lasr
 <LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_llsl
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_round
-<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
 </UL>
-<BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
+<BR>[Called By]<UL><LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
+<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dsub
-<LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
 </UL>
 
 <P><STRONG><a name="[82]"></a>__aeabi_dsub</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, dadd.o(.text), UNUSED)
@@ -1049,14 +1049,14 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = GIMBAL_task &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
-<LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;shoot_init
-<LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;shoot_control_loop
 <LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_mode_set
 <LI><a href="#[ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Updata
 <LI><a href="#[f3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Send_Voltage
 <LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Init
 <LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Control
 <LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;toe_is_error
+<LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;shoot_init
+<LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;shoot_control_loop
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> start_task.o(i.start_task)
 </UL>
@@ -1164,13 +1164,13 @@ Global Symbols
 <LI><a href="#[10e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI5_DMA_Init
 <LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI5SetSpeedAndDataSize
 <LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIOB_Exti8_GPIO_Init
-<LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;INS_Data_updata
-<LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_temp_Control
-<LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_Cali_Slove
 <LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Init
 <LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_angle
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AHRS_update
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AHRS_init
+<LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;INS_Data_updata
+<LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_temp_Control
+<LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_Cali_Slove
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> start_task.o(i.start_task)
 </UL>
@@ -1258,18 +1258,18 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[c3]"></a>PID_Calc</STRONG> (Thumb, 492 bytes, Stack size 0 bytes, pid.o(i.PID_Calc))
-<BR><BR>[Called By]<UL><LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_temp_Control
-<LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;shoot_control_loop
-<LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Gyro_mode
+<BR><BR>[Called By]<UL><LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Gyro_mode
 <LI><a href="#[fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Enconde_mode
 <LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Follow_Yaw_Mode
 <LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Calc_Current
+<LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IMU_temp_Control
+<LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;shoot_control_loop
 </UL>
 
 <P><STRONG><a name="[cf]"></a>PID_Init</STRONG> (Thumb, 92 bytes, Stack size 0 bytes, pid.o(i.PID_Init))
-<BR><BR>[Called By]<UL><LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;shoot_init
-<LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Init
+<BR><BR>[Called By]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Init
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;INSTask
+<LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;shoot_init
 </UL>
 
 <P><STRONG><a name="[b1]"></a>RCC_AHB1PeriphClockCmd</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32f4xx_rcc.o(i.RCC_AHB1PeriphClockCmd))
@@ -1811,8 +1811,8 @@ Global Symbols
 <P><STRONG><a name="[20d]"></a>printf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0printf), UNUSED)
 
 <P><STRONG><a name="[15a]"></a>__ARM_fpclassifyf</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, fpclassifyf.o(i.__ARM_fpclassifyf))
-<BR><BR>[Called By]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_atan2f
+<BR><BR>[Called By]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_atan2f
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
 </UL>
 
 <P><STRONG><a name="[88]"></a>__hardfp_asinf</STRONG> (Thumb, 258 bytes, Stack size 16 bytes, asinf.o(i.__hardfp_asinf))
@@ -1860,8 +1860,8 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[15b]"></a>__mathlib_flt_underflow</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, funder.o(i.__mathlib_flt_underflow))
-<BR><BR>[Called By]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_atan2f
+<BR><BR>[Called By]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_atan2f
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
 </UL>
 
 <P><STRONG><a name="[20e]"></a>__scatterload_copy</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_copy), UNUSED)
@@ -1871,9 +1871,9 @@ Global Symbols
 <P><STRONG><a name="[210]"></a>__scatterload_zeroinit</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_zeroinit), UNUSED)
 
 <P><STRONG><a name="[15d]"></a>__set_errno</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, errno.o(i.__set_errno))
-<BR><BR>[Called By]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
-<LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sqrtf
+<BR><BR>[Called By]<UL><LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sqrtf
 <LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_atan2f
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_asinf
 </UL>
 
 <P><STRONG><a name="[a0]"></a>buzzer_init</STRONG> (Thumb, 174 bytes, Stack size 56 bytes, buzzer.o(i.buzzer_init))
@@ -2135,10 +2135,10 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[d2]"></a>get_remote_control_point</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, rc_dt7.o(i.get_remote_control_point))
-<BR><BR>[Called By]<UL><LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;shoot_init
-<LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Init
+<BR><BR>[Called By]<UL><LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Init
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Init
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calibrate_task
+<LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;shoot_init
 </UL>
 
 <P><STRONG><a name="[131]"></a>get_temprate</STRONG> (Thumb, 80 bytes, Stack size 16 bytes, adc.o(i.get_temprate))
@@ -3648,10 +3648,10 @@ Local Symbols
 <P><STRONG><a name="[ef]"></a>Gimbal_Updata</STRONG> (Thumb, 338 bytes, Stack size 16 bytes, gimbal_task.o(i.Gimbal_Updata))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = Gimbal_Updata &rArr; ecd_angle_format
 </UL>
-<BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gyro_angle_format
-<LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_MPU6500_Gyro_Data_Point
-<LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ecd_angle_format
+<BR>[Calls]<UL><LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ecd_angle_format
 <LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_INS_angle_point
+<LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gyro_angle_format
+<LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_MPU6500_Gyro_Data_Point
 </UL>
 <BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GIMBAL_task
 </UL>

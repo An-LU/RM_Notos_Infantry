@@ -18,6 +18,7 @@
 #define RC_SW_UP ((uint16_t)1)
 #define RC_SW_MID ((uint16_t)3)
 #define RC_SW_DOWN ((uint16_t)2)
+
 typedef union
 {
 	uint16_t key_code;

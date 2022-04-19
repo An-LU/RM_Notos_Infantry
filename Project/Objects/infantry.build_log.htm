@@ -27,7 +27,28 @@ Project File Date:  04/17/2022
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil v5\ARM\ARMCC\Bin'
 Build target 'standard'
-".\Objects\infantry.axf" - 0 Error(s), 0 Warning(s).
+compiling gimbal_task.c...
+..\user\APP\gimbal_task\gimbal_task.c(139): warning:  #177-D: variable "gyro_test"  was declared but never referenced
+  	uint8_t gyro_test = 0;		//≤‚ ‘
+..\user\APP\gimbal_task\gimbal_task.c(25): warning:  #550-D: variable "Yaw_Can_Set_Voltage"  was set but never used
+  static int16_t Yaw_Can_Set_Voltage = 0, Pitch_Can_Set_Voltage = 0, Shoot_Can_Set_Voltage = 0;
+..\user\APP\gimbal_task\gimbal_task.c(25): warning:  #550-D: variable "Pitch_Can_Set_Voltage"  was set but never used
+  static int16_t Yaw_Can_Set_Voltage = 0, Pitch_Can_Set_Voltage = 0, Shoot_Can_Set_Voltage = 0;
+..\user\APP\gimbal_task\gimbal_task.c(25): warning:  #550-D: variable "Shoot_Can_Set_Voltage"  was set but never used
+  static int16_t Yaw_Can_Set_Voltage = 0, Pitch_Can_Set_Voltage = 0, Shoot_Can_Set_Voltage = 0;
+..\user\APP\gimbal_task\gimbal_task.c(28): warning:  #177-D: variable "yaw_ecd_speed_rc_pid"  was declared but never referenced
+  static PidTypeDef yaw_ecd_speed_rc_pid = { PID_POSITION, YAW_ECD_SPEED_RC_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(30): warning:  #177-D: variable "yaw_gyro_speed_rc_pid"  was declared but never referenced
+  static PidTypeDef yaw_gyro_speed_rc_pid = { PID_POSITION, YAW_GYRO_SPEED_RC_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(36): warning:  #177-D: variable "yaw_ecd_speed_auto_pid"  was declared but never referenced
+  static PidTypeDef yaw_ecd_speed_auto_pid = { PID_POSITION, YAW_ECD_SPEED_AUTO_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(38): warning:  #177-D: variable "yaw_gyro_speed_auto_pid"  was declared but never referenced
+  static PidTypeDef yaw_gyro_speed_auto_pid = { PID_POSITION, YAW_GYRO_SPEED_AUTO_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c: 8 warnings, 0 errors
+linking...
+Program Size: Code=47240 RO-data=3476 RW-data=1680 ZI-data=135256  
+FromELF: creating hex file...
+".\Objects\infantry.axf" - 0 Error(s), 8 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -40,7 +61,7 @@ Package Vendor: Keil
   D:\Keil v5\ARM\PACK\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:05
+Build Time Elapsed:  00:00:14
 </pre>
 </body>
 </html>

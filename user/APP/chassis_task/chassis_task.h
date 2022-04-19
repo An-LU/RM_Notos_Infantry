@@ -109,7 +109,7 @@ typedef struct
 typedef struct
 {
 	const RC_ctrl_s *chassis_RC;			//遥控数据
-	const Gimbal_Motor_s *yaw_motor_gimbal;   //底盘使用到yaw云台电机的相对角度来计算底盘的欧拉角
+	//const Gimbal_Motor_s *yaw_motor_gimbal;   //底盘使用到yaw云台电机的相对角度来计算底盘的欧拉角
 	const INS_Data_s *ins_data;			//陀螺仪相关角度
 	
 	Control_Mode_e ctrl_mode;				//控制模式
@@ -125,19 +125,17 @@ typedef struct
 	fp32 chassis_vx_set;
 	fp32 chassis_vy;
 	fp32 chassis_vy_set;
-//	fp32 chassis_vx_max;
-//	fp32 chassis_vx_min;
-//	fp32 chassis_vy_max;
-//	fp32 chassis_vy_min;
 	fp32 chassis_vw;		//底盘旋转角速度rad/s		ra:旋转角度rotation angle
 	fp32 chassis_vw_set;	//底盘旋转角速度设定值
-	fp32 chassis_relative_angle;	//底盘与云台的相对角度rad/s
-//	fp32 chassis_relative_angle_set;//设置相对云台控制角度
 	
-	fp32 chassis_last_absolute_yaw;	//上一次角度
-	fp32 chassis_absolute_yaw;		//底盘绝对角度 陀螺仪减去云台yaw的角度 底盘角度固定码盘
+	fp32 chassis_relative_angle;		//底盘与云台的相对角度rad/s
+	fp32 chassis_relative_angle_set;	//设置相对云台控制角度
+	fp32 chassis_relative_angle_last;
+	fp32 chassis_absolute_yaw;			//底盘绝对角度 陀螺仪减去云台yaw的角度 底盘角度固定码盘
 	fp32 chassis_absolute_yaw_set;
-	fp32 chassis_yaw;				//叠加圈数后的角度
+	fp32 chassis_absolute_yaw_last;		//上一次角度
+	
+	fp32 chassis_yaw;					//叠加圈数后的角度
 	fp32 chassis_last_yaw;
 	
 	//fp32 chassis_absolute_pitch;	//爬坡模式可用 后续可增加底盘模式

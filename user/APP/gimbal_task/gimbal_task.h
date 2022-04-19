@@ -156,7 +156,8 @@ typedef struct
 	Control_Mode_e ctrl_mode;				//控制模式
 	Gimbal_Mode_e gimbal_mode;				//云台模式
 	Gimbal_Behavior_e gimbal_behavior;		//云台行为
-	Gimbal_Mode_e last_gimbal_mode;			//云台上一次模式
+	Gimbal_Mode_e gimbal_mode_last;			//云台上一次模式
+	Gimbal_Behavior_e gimbal_behavior_last;		//云台行为
 	
 	Gimbal_Motor_s pitch_motor;				//云台pitch电机
 	Gimbal_Motor_s yaw_motor;				//云台yaw电机
@@ -168,6 +169,7 @@ typedef struct
 
 extern const Gimbal_Motor_s *get_gimbal_yaw_motor_point(void);
 extern const Gimbal_Motor_s *get_gimbal_pitch_motor_point(void);
+extern fp32 get_gimbal_relative_angle(void);
 extern void GIMBAL_task(void *pvParameters);
 
 #endif

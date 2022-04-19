@@ -9,22 +9,10 @@
 #include "CAN_Receive.h"
 #include "Detect_Task.h"
 #include "pid.h"
-//#include "keyboard.h"
 
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
 #include "task.h"
-
-
-
-//角度规整
-#define ECD_format(ecd,ecd_del)						\
-	{												\
-		if( (ecd) <= 8191 && (ecd) >= (ecd_del) )	\
-			(ecd) -= (ecd_del);						\
-		else if( (ecd) < (ecd_del) )				\
-			(ecd) = (ecd) - (ecd_del) + 8192;		\
-	}
 
 //#if INCLUDE_uxTaskGetStackHighWaterMark	//查看任务堆栈剩余容量
 //uint32_t gimbal_high_water;
@@ -147,6 +135,7 @@ static void Gimbal_Init()
 static void Gimbal_mode_set(void)
 {
 	Gimbal_Mode_e mode = GIMBAL_RELAX;
+	Gimbal_Behavior_e behavior = GIMBAL_NORMAL;
 	uint8_t gyro_test = 0;		//测试
 	//控制方式选择
 	if(switch_is_mid(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))		//遥控控制
@@ -166,12 +155,12 @@ static void Gimbal_mode_set(void)
 	{
 		if (switch_is_mid(gimbal_info.gimbal_RC->rc.s[GIMBAL_MODE_SW]))		//中间为遥控
 		{
-			mode = GIMBAL_ENCONDE;//遥控
+			mode = GIMBAL_ENCONDE;//机械模式
 		}
 		else if (switch_is_up(gimbal_info.gimbal_RC->rc.s[GIMBAL_MODE_SW]))		//上拨为自动
 		{
-			//gimbal_info.gimbal_mode = GIMBAL_AUTO;//自动
-			mode = GIMBAL_GYRO;//
+			//mode = GIMBAL_AUTO;//自动
+			mode = GIMBAL_GYRO;//陀螺仪模式
 		}
 		else if (switch_is_down(gimbal_info.gimbal_RC->rc.s[GIMBAL_MODE_SW]))	//下拨为无力
 		{
@@ -181,19 +170,26 @@ static void Gimbal_mode_set(void)
 	}
 	else		//键鼠控制
 	{
-//		if(key_status.bit.Q || gyro_test)	//Q开启小陀螺chassis_info.chassis_RC->key.bit.Q
-//		{
-//			//mode = CHASSIS_GYRO;	//小陀螺
-//		}
+		//云台模式设置 短按切换
+		if(gimbal_info.gimbal_RC->key_data.key_short_press.bit.E)
+		{
+			mode = GIMBAL_ENCONDE;
+		}
+		//云台行为设置
+		if(gimbal_info.gimbal_RC->key_data.key_click.bit.Q )	//Q开启小陀螺chassis_info.chassis_RC->key.bit.Q
+		{
+			behavior = GIMBAL_NORMAL_GR;	//小陀螺
+		}
 	}
 	gimbal_info.gimbal_mode = mode;
-
+	gimbal_info.gimbal_behavior = behavior;
 	//模式切换保存数据
-	if(gimbal_info.gimbal_mode != gimbal_info.last_gimbal_mode)
+	if(gimbal_info.gimbal_mode != gimbal_info.gimbal_mode_last)
 	{
-		gimbal_mode_change_save(gimbal_info.last_gimbal_mode, gimbal_info.gimbal_mode);
+		gimbal_mode_change_save(gimbal_info.gimbal_mode_last, gimbal_info.gimbal_mode);
 	}
-	gimbal_info.last_gimbal_mode = gimbal_info.gimbal_mode;
+	gimbal_info.gimbal_mode_last = gimbal_info.gimbal_mode;
+	gimbal_info.gimbal_behavior_last = gimbal_info.gimbal_behavior;
 }
 //云台数据更新
 static void Gimbal_Updata(void)
@@ -535,8 +531,12 @@ const Gimbal_Motor_s *get_gimbal_yaw_motor_point(void)
 {
     return &gimbal_info.yaw_motor;
 }
-
 const Gimbal_Motor_s *get_gimbal_pitch_motor_point(void)
 {
     return &gimbal_info.pitch_motor;
 }
+fp32 get_gimbal_relative_angle(void)
+{
+	return (gimbal_info.yaw_motor.relative_angle - gimbal_info.turn_circle_num * PI);
+}
+

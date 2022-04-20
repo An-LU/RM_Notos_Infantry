@@ -50,7 +50,7 @@ fp32 ecd_angle_format(uint16_t ecd, uint16_t last_ecd, const uint16_t offset_ecd
 	return angle * Ecd_to_Rad;
 }
 //陀螺仪角度规整 -PI~PI--> -2PI~2PI (rad) (complete)
-fp32 gyro_angle_format(const fp32 angle_now, const fp32 angle_last, uint8_t* turn_table_flag)
+fp32 gyro_angle_format(const fp32 angle_last, const fp32 angle_now, uint8_t* turn_table_flag)
 {
 	fp32 angle;
 	if (angle_now > 0 && angle_now < 1.5f && angle_last < 0 && angle_last > -1.5f)
@@ -78,20 +78,20 @@ fp32 gyro_angle_format(const fp32 angle_now, const fp32 angle_last, uint8_t* tur
 	return angle;
 }
 //计算云台圈数并返回叠加圈数后的角度角度
-fp32 calc_turn_angle(const fp32 *angle_last, const fp32 *angle_now, uint8_t *turn_circle_num)
+fp32 calc_turn_angle(const fp32 angle_last, const fp32 angle_now, int16_t *turn_circle_num)
 {
 	fp32 angle = 0.0f;
 	//正向圈数为正 逆时针
-	if(*angle_now - *angle_last < -4.0f)
+	if(angle_now - angle_last < -4.0f)
 	{
 		(*turn_circle_num)++;
-		angle = *angle_now + 2 * PI;
+		angle = angle_now + 2 * PI;
 	}
 	//反向圈数为负 顺时针
-	else if(*angle_now - *angle_last > 4.0f)
+	else if(angle_now - angle_last > 4.0f)
 	{
 		(*turn_circle_num)--;
-		angle = *angle_now - 2 * PI;
+		angle = angle_now - 2 * PI;
 	}
 	return angle;
 }

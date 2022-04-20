@@ -15,6 +15,7 @@
 .\objects\start_task.o: ..\User\FreeRTOS\include\list.h
 .\objects\start_task.o: ..\User\APP\Detect_Task\Detect_Task.h
 .\objects\start_task.o: ..\User\APP\Calibrate_Task\Calibrate_Task.h
+.\objects\start_task.o: ..\User\hardware\RC\rc.h
 .\objects\start_task.o: ..\User\APP\User_Task\User_Task.h
 .\objects\start_task.o: ..\User\APP\INS_Task\INS_Task.h
 .\objects\start_task.o: ..\User\APP\Chassis_Task\Chassis_Task.h

@@ -344,9 +344,9 @@ void INS_set_cali_gyro(fp32 cali_scale[3], fp32 cali_offset[3])
 }
 static void INS_Data_updata(void)
 {
-	INS_Data.angle_yaw = INS_gyro[INS_YAW_ADDRESS_OFFSET];
-	INS_Data.angle_pitch = INS_gyro[INS_PITCH_ADDRESS_OFFSET];
-	INS_Data.angle_roll = INS_gyro[INS_ROLL_ADDRESS_OFFSET];
+	INS_Data.angle_yaw = INS_Angle[INS_YAW_ADDRESS_OFFSET];
+	INS_Data.angle_pitch = INS_Angle[INS_PITCH_ADDRESS_OFFSET];
+	INS_Data.angle_roll = INS_Angle[INS_ROLL_ADDRESS_OFFSET];
 	
 	INS_Data.gyro_x = INS_gyro[INS_GYRO_X_ADDRESS_OFFSET];
 	INS_Data.gyro_y = INS_gyro[INS_GYRO_Y_ADDRESS_OFFSET];

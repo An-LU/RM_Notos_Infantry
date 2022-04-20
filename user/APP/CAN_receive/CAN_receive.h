@@ -22,8 +22,8 @@
 //#define CHASSIS_CAN CAN2
 //#define GIMBAL_CAN CAN1
 //ÐÞ¸Äºó
-#define CHASSIS_CAN CAN1
-#define GIMBAL_CAN CAN2
+#define CHASSIS_CAN CAN2
+#define GIMBAL_CAN CAN1
 
 /* CAN send and receive ID */
 typedef enum

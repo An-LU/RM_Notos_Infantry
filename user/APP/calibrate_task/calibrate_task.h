@@ -20,6 +20,7 @@
 #ifndef CALIBRATE_TASK_H
 #define CALIBRATE_TASK_H
 #include "main.h"
+#include "rc.h"
 
 #define imu_start_buzzer() buzzer_on(95, 10000) //IMU元件校准的蜂鸣器的频率以及强度
 

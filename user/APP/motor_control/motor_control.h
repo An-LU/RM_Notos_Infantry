@@ -14,7 +14,7 @@ typedef enum
 
 //内联函数代替宏
 //去除死区
-inline void i_dead_zone_del(const int16_t *input, int16_t *output, int8_t deal)
+inline static void i_dead_zone_del(const int16_t *input, int16_t *output, int8_t deal)
 {
 	if (*input > deal || *input < -deal)
 		*output = *input;
@@ -24,9 +24,9 @@ inline void i_dead_zone_del(const int16_t *input, int16_t *output, int8_t deal)
 //电机反馈机械角度规整 0~8191--> -2PI~2PI (rad)
 fp32 ecd_angle_format(uint16_t ecd, uint16_t last_ecd, const uint16_t offset_ecd, uint8_t *turn_table_flag);
 //陀螺仪角度规整 -PI~PI--> -2PI~2PI (rad)
-fp32 gyro_angle_format(const fp32 angle_now, const fp32 angle_last, uint8_t *turn_table_flag);
+fp32 gyro_angle_format(const fp32 angle_last, const fp32 angle_now, uint8_t *turn_table_flag);
 //计算云台圈数和实际角度
-fp32 calc_turn_angle(const fp32 *angle_last, const fp32 *angle_now, uint8_t *turn_circle_num);
+fp32 calc_turn_angle(const fp32 angle_last, const fp32 angle_now, int16_t *turn_circle_num);
 //去除死区
 //void dead_zone_del(const int16_t *input, int16_t *output, int8_t deal);
 

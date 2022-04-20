@@ -34,7 +34,7 @@ static void chassis_rc_process(fp32 *vx_ch, fp32 *vy_ch, int16_t *wz_ch);
 static void chassis_key_process(fp32 *, fp32 *);
 static void chassis_mode_change_save(Chassis_Mode_e , Chassis_Mode_e );
 static fp32 chassis_absolute_angle_process(const fp32, const fp32);
-static fp32 chassis_calc_turn_angle(const fp32 *, fp32 *);
+//static fp32 chassis_calc_turn_angle(const fp32 *, fp32 *);
 
 void chassis_task(void *pvParameters)
 {
@@ -85,7 +85,7 @@ static void Chassis_Init(void)
 	//底盘模式初始化
 	chassis_info.chassis_mode = CHASSIS_RELAX;
 	//云台yaw轴电机数据获取，用于计算底盘绝对角度
-	chassis_info.yaw_motor_gimbal = get_gimbal_yaw_motor_point();
+	//chassis_info.yaw_motor_gimbal = get_gimbal_yaw_motor_point();
 	//滤波初始化
     first_order_filter_init(&chassis_info.chassis_vx_first_OF, CHASSIS_CONTROL_TIME, chassis_x_order_filter);
     first_order_filter_init(&chassis_info.chassis_vy_first_OF, CHASSIS_CONTROL_TIME, chassis_y_order_filter);
@@ -103,6 +103,7 @@ static void Chassis_Init(void)
 static void Chassis_Mode_Set(void)
 {
 	Chassis_Mode_e mode = CHASSIS_RELAX;
+	Chassis_Behavior_e behavior = CHASSIS_NORMAL;
 	static uint8_t mode_status;
 	uint8_t gyro_test = 0;		//测试
 	//控制方式选择
@@ -143,8 +144,15 @@ static void Chassis_Mode_Set(void)
 			mode = CHASSIS_FOLLOW_YAW;
 		else
 			mode = CHASSIS_NO_FOLLOW;
+		
+		//底盘行为设置 点击切换
+		if(chassis_info.chassis_RC->key_data.key_click.bit.Q)
+			behavior = CHASSIS_GYRO;
+		if(chassis_info.chassis_RC->key_data.key_click.bit.F)
+			behavior = CHASSIS_CENTER;
 	}
 	chassis_info.chassis_mode = mode;
+	chassis_info.chassis_behavior = behavior;
 	//模式切换保存数据
 	if(chassis_info.chassis_mode != chassis_info.chassis_last_mode)
 	{
@@ -160,7 +168,7 @@ static void Chassis_Updata(void)
 	static fp32 gyro_yaw_last_angle;
 	uint8_t i;
 	//处理陀螺仪角度范围为-2PI~2PI
-	gyro_angle_format(gyro_yaw_angle, gyro_yaw_last_angle, &chassis_info.chassis_table_flag);
+	gyro_yaw_angle =  gyro_angle_format(gyro_yaw_last_angle, gyro_yaw_angle, &chassis_info.chassis_table_flag);
 	//更新电机速度
 	for(i = 0; i < 4; i++)
 	{
@@ -173,12 +181,12 @@ static void Chassis_Updata(void)
 	chassis_info.chassis_vx = (-chassis_info.chassis_motor[0].speed - chassis_info.chassis_motor[1].speed - chassis_info.chassis_motor[2].speed - chassis_info.chassis_motor[3].speed) * MOTOR_SPEED_TO_CHASSIS_SPEED_VW;
 	//更新底盘与云台的相对角度 即为云台电机的相对角度 (-2PI~2PI)
 	//chassis_info.chassis_relative_angle = chassis_info.yaw_motor_gimbal->relative_angle;
-	chassis_info.chassis_relative_angle = get_gimbal_relative_angle();
+	chassis_info.chassis_relative_angle = -get_gimbal_relative_angle();
 	//更新底盘绝对角度 此处更新角度是原始角度 范围是-2PI~2PI 没有计算圈数叠加角度
 	chassis_info.chassis_absolute_yaw = gyro_yaw_angle - chassis_info.chassis_relative_angle;//陀螺仪角度-云台相对角度(电机传感器提供机械角度)
 	chassis_info.chassis_absolute_yaw_last = chassis_info.chassis_absolute_yaw;
 	//计算圈数并叠加圈数角度
-	chassis_calc_turn_angle(&chassis_info.chassis_last_yaw, &chassis_info.chassis_yaw);
+	chassis_info.chassis_yaw = calc_turn_angle(chassis_info.chassis_last_yaw, chassis_info.chassis_yaw, &chassis_info.chassis_circle_num);
 	chassis_info.chassis_last_yaw = chassis_info.chassis_yaw;
 	//更新陀螺仪上一次角度 用于计算处理陀螺仪边界值
 	gyro_yaw_last_angle = gyro_yaw_angle;
@@ -217,11 +225,11 @@ static void Chassis_Control(void)
 			Chassis_No_Follow_Mode(&vx_set_channel, &vy_set_channel, &vw_set_channel);
 			break;
 		}
-		case CHASSIS_GYRO:
-		{
-			Chassis_Gyro_Mode(&vx_set_channel, &vy_set_channel, &vw_set_channel);
-			break;
-		}
+//		case CHASSIS_GYRO:
+//		{
+//			Chassis_Gyro_Mode(&vx_set_channel, &vy_set_channel, &vw_set_channel);
+//			break;
+//		}
 		case CHASSIS_CALI:
 		{
 			Chassis_Cali_Mode();

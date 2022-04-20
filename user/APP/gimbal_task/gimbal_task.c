@@ -172,14 +172,11 @@ static void Gimbal_mode_set(void)
 	{
 		//云台模式设置 短按切换
 		if(gimbal_info.gimbal_RC->key_data.key_short_press.bit.E)
-		{
 			mode = GIMBAL_ENCONDE;
-		}
-		//云台行为设置
+		
+		//云台行为设置 点击切换
 		if(gimbal_info.gimbal_RC->key_data.key_click.bit.Q )	//Q开启小陀螺chassis_info.chassis_RC->key.bit.Q
-		{
 			behavior = GIMBAL_NORMAL_GR;	//小陀螺
-		}
 	}
 	gimbal_info.gimbal_mode = mode;
 	gimbal_info.gimbal_behavior = behavior;
@@ -199,8 +196,8 @@ static void Gimbal_Updata(void)
 	if(gimbal_info.gimbal_mode == GIMBAL_GYRO)	//陀螺仪反馈模式
 	{
 		//初始化陀螺仪角度
-		gimbal_info.yaw_motor.gyro_now = gyro_angle_format(*(gimbal_INT_angle_point + INS_YAW_ADDRESS_OFFSET), gimbal_info.yaw_motor.gyro_last, &gimbal_info.yaw_motor.turn_table_flag);
-		gimbal_info.pitch_motor.gyro_now = gyro_angle_format(*(gimbal_INT_angle_point + INS_PITCH_ADDRESS_OFFSET), gimbal_info.pitch_motor.gyro_last, &gimbal_info.pitch_motor.turn_table_flag);
+		gimbal_info.yaw_motor.gyro_now = gyro_angle_format(gimbal_info.yaw_motor.gyro_last, *(gimbal_INT_angle_point + INS_YAW_ADDRESS_OFFSET), &gimbal_info.yaw_motor.turn_table_flag);
+		gimbal_info.pitch_motor.gyro_now = gyro_angle_format(gimbal_info.pitch_motor.gyro_last, *(gimbal_INT_angle_point + INS_PITCH_ADDRESS_OFFSET), &gimbal_info.pitch_motor.turn_table_flag);
 		//角度更新  外环
 		gimbal_info.pitch_motor.absolute_angle_last = gimbal_info.pitch_motor.absolute_angle;
 		gimbal_info.yaw_motor.absolute_angle_last = gimbal_info.yaw_motor.absolute_angle;

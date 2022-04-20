@@ -2,6 +2,7 @@
 .\objects\calibrate_task.o: ..\user\APP\calibrate_task\calibrate_Task.h
 .\objects\calibrate_task.o: ..\User\main.h
 .\objects\calibrate_task.o: D:\Keil v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\calibrate_task.o: ..\User\hardware\RC\rc.h
 .\objects\calibrate_task.o: ..\User\hardware\ADC\adc.h
 .\objects\calibrate_task.o: ..\User\hardware\BUZZER\buzzer.h
 .\objects\calibrate_task.o: ..\User\hardware\FLASH\flash.h

@@ -92,9 +92,14 @@ typedef enum
 	CHASSIS_STOP,				//底盘停止
 	CHASSIS_FOLLOW_YAW,			//底盘跟随云台模式 前进方向由云台决定
 	CHASSIS_NO_FOLLOW,			//底盘不跟随云台模式 前进方向由底盘决定
-	CHASSIS_GYRO,				//小陀螺模式
 	CHASSIS_CALI				//校准模式
 }Chassis_Mode_e;//底盘模式
+typedef enum
+{
+	CHASSIS_NORMAL,				//普通
+	CHASSIS_GYRO,				//小陀螺
+	CHASSIS_CENTER				//底盘回中
+}Chassis_Behavior_e;//底盘行为
 typedef struct
 {
 	const motor_measure_t *chassis_motor_measure;	//电调反馈信息
@@ -115,6 +120,7 @@ typedef struct
 	Control_Mode_e ctrl_mode;				//控制模式
 	Chassis_Mode_e chassis_mode;			//底盘模式
 	Chassis_Mode_e chassis_last_mode;
+	Chassis_Behavior_e chassis_behavior;
 	
 	PidTypeDef chassis_angle_pid;			//底盘整体旋转角度环
 	Chassis_Motor_s chassis_motor[4];		//底盘四个电机
@@ -128,14 +134,14 @@ typedef struct
 	fp32 chassis_vw;		//底盘旋转角速度rad/s		ra:旋转角度rotation angle
 	fp32 chassis_vw_set;	//底盘旋转角速度设定值
 	
-	fp32 chassis_relative_angle;		//底盘与云台的相对角度rad/s
-	fp32 chassis_relative_angle_set;	//设置相对云台控制角度
-	fp32 chassis_relative_angle_last;
+	fp32 chassis_relative_angle;		//底盘与云台的相对角度rad/s 用于计算跟随云台模式下的前进方向
+//	fp32 chassis_relative_angle_set;	//设置相对云台控制角度
+//	fp32 chassis_relative_angle_last;
 	fp32 chassis_absolute_yaw;			//底盘绝对角度 陀螺仪减去云台yaw的角度 底盘角度固定码盘
 	fp32 chassis_absolute_yaw_set;
 	fp32 chassis_absolute_yaw_last;		//上一次角度
 	
-	fp32 chassis_yaw;					//叠加圈数后的角度
+	fp32 chassis_yaw;					//叠加圈数后的底盘yaw角度
 	fp32 chassis_last_yaw;
 	
 	//fp32 chassis_absolute_pitch;	//爬坡模式可用 后续可增加底盘模式

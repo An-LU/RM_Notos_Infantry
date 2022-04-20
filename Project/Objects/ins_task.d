@@ -50,6 +50,7 @@
 .\objects\ins_task.o: ..\User\AHRS\AHRS.h
 .\objects\ins_task.o: ..\User\AHRS\AHRS_MiddleWare.h
 .\objects\ins_task.o: ..\User\APP\Calibrate_Task\calibrate_Task.h
+.\objects\ins_task.o: ..\User\hardware\RC\rc.h
 .\objects\ins_task.o: ..\User\APP\pid\pid.h
 .\objects\ins_task.o: ..\User\FreeRTOS\include\FreeRTOSConfig.h
 .\objects\ins_task.o: ..\User\FreeRTOS\include\FreeRTOS.h

@@ -18,7 +18,14 @@ static RC_ctrl_s rc_ctrl;
 //接收原始数据，为18个字节，给了36个字节长度，防止DMA传输越界
 static uint8_t SBUS_rx_buf[2][SBUS_RX_BUF_NUM];
 
-
+//取正函数
+inline static int16_t RC_abs(int16_t value)
+{
+	if (value > 0)
+		return value;
+	else
+		return -value;
+}
 //初始化DMA，串口1
 void remote_control_init(void)
 {
@@ -134,18 +141,6 @@ void USART1_IRQHandler(void)
             }
 
         }
-    }
-}
-//取正函数
-static int16_t RC_abs(int16_t value)
-{
-    if (value > 0)
-    {
-        return value;
-    }
-    else
-    {
-        return -value;
     }
 }
 

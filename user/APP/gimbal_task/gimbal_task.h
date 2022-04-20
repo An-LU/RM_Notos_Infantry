@@ -26,7 +26,7 @@
 /*******************相关机械角度_END**********************************/
 
 //云台模式选择 左边开关
-#define GIMBAL_MODE_SW		1
+#define GIMBAL_MODE_SW		0
 //左边摇杆控制
 #define YAW_CHANNEL			2
 #define PITCH_CHANNEL		3
@@ -126,7 +126,7 @@ typedef struct
 	first_order_filter_type_t gimbal_motor_first_OF;	//电机一阶低通滤波
 	
 	//由电机反馈角度
-	fp32 relative_angle;		
+	fp32 relative_angle;
 	fp32 relative_angle_last;
 	fp32 relative_angle_set;
 	//陀螺仪反馈角度 rad

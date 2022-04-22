@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\infantry.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\infantry.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu Apr 21 00:36:08 2022
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu Apr 21 19:42:13 2022
 <BR><P>
 <H3>Maximum Stack Usage =        280 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1046,7 +1046,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[6c]"></a>GIMBAL_task</STRONG> (Thumb, 90 bytes, Stack size 0 bytes, gimbal_task.o(i.GIMBAL_task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = GIMBAL_task &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = GIMBAL_task &rArr; Gimbal_Init &rArr; Gimbal_Updata &rArr; ecd_angle_format
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 <LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_mode_set
@@ -1916,8 +1916,9 @@ Global Symbols
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;INSTask
 </UL>
 
-<P><STRONG><a name="[de]"></a>calc_turn_angle</STRONG> (Thumb, 92 bytes, Stack size 0 bytes, motor_control.o(i.calc_turn_angle))
-<BR><BR>[Called By]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Updata
+<P><STRONG><a name="[de]"></a>calc_turn_angle</STRONG> (Thumb, 98 bytes, Stack size 0 bytes, motor_control.o(i.calc_turn_angle))
+<BR><BR>[Called By]<UL><LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Updata
+<LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Updata
 </UL>
 
 <P><STRONG><a name="[ac]"></a>cali_param_init</STRONG> (Thumb, 168 bytes, Stack size 8 bytes, calibrate_task.o(i.cali_param_init))
@@ -1977,7 +1978,7 @@ Global Symbols
 <LI><a href="#[18b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ist8310_delay_us
 </UL>
 
-<P><STRONG><a name="[103]"></a>ecd_angle_format</STRONG> (Thumb, 106 bytes, Stack size 32 bytes, motor_control.o(i.ecd_angle_format))
+<P><STRONG><a name="[103]"></a>ecd_angle_format</STRONG> (Thumb, 110 bytes, Stack size 32 bytes, motor_control.o(i.ecd_angle_format))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = ecd_angle_format
 </UL>
 <BR>[Calls]<UL><LI><a href="#[171]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;i_ecd_del
@@ -3496,7 +3497,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Control
 </UL>
 
-<P><STRONG><a name="[cc]"></a>Chassis_Init</STRONG> (Thumb, 180 bytes, Stack size 8 bytes, chassis_task.o(i.Chassis_Init))
+<P><STRONG><a name="[cc]"></a>Chassis_Init</STRONG> (Thumb, 186 bytes, Stack size 8 bytes, chassis_task.o(i.Chassis_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = Chassis_Init &rArr; Chassis_Updata
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;first_order_filter_init
@@ -3545,7 +3546,7 @@ Local Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Control
 </UL>
 
-<P><STRONG><a name="[d2]"></a>Chassis_Updata</STRONG> (Thumb, 368 bytes, Stack size 24 bytes, chassis_task.o(i.Chassis_Updata))
+<P><STRONG><a name="[d2]"></a>Chassis_Updata</STRONG> (Thumb, 398 bytes, Stack size 24 bytes, chassis_task.o(i.Chassis_Updata))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = Chassis_Updata
 </UL>
 <BR>[Calls]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gyro_angle_format
@@ -3626,10 +3627,11 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Control
 </UL>
 
-<P><STRONG><a name="[ee]"></a>Gimbal_Init</STRONG> (Thumb, 216 bytes, Stack size 8 bytes, gimbal_task.o(i.Gimbal_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Gimbal_Init
+<P><STRONG><a name="[ee]"></a>Gimbal_Init</STRONG> (Thumb, 220 bytes, Stack size 8 bytes, gimbal_task.o(i.Gimbal_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = Gimbal_Init &rArr; Gimbal_Updata &rArr; ecd_angle_format
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;first_order_filter_init
+<LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Updata
 <LI><a href="#[ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_Yaw_Gimbal_Motor_Measure_Point
 <LI><a href="#[100]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_Pitch_Gimbal_Motor_Measure_Point
 <LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_remote_control_point
@@ -3651,15 +3653,17 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GIMBAL_task
 </UL>
 
-<P><STRONG><a name="[f0]"></a>Gimbal_Updata</STRONG> (Thumb, 338 bytes, Stack size 16 bytes, gimbal_task.o(i.Gimbal_Updata))
-<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = Gimbal_Updata &rArr; ecd_angle_format
+<P><STRONG><a name="[f0]"></a>Gimbal_Updata</STRONG> (Thumb, 476 bytes, Stack size 24 bytes, gimbal_task.o(i.Gimbal_Updata))
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = Gimbal_Updata &rArr; ecd_angle_format
 </UL>
 <BR>[Calls]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gyro_angle_format
 <LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_INS_angle_point
+<LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;calc_turn_angle
 <LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_MPU6500_Gyro_Data_Point
 <LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ecd_angle_format
 </UL>
-<BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GIMBAL_task
+<BR>[Called By]<UL><LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gimbal_Init
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GIMBAL_task
 </UL>
 
 <P><STRONG><a name="[f1]"></a>Gimbal_mode_set</STRONG> (Thumb, 190 bytes, Stack size 16 bytes, gimbal_task.o(i.Gimbal_mode_set))
@@ -3769,7 +3773,7 @@ Local Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[13e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Shoot_Set_Mode
 </UL>
 
-<P><STRONG><a name="[171]"></a>i_ecd_del</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, motor_control.o(i.i_ecd_del))
+<P><STRONG><a name="[171]"></a>i_ecd_del</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, motor_control.o(i.i_ecd_del))
 <BR><BR>[Called By]<UL><LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ecd_angle_format
 </UL>
 

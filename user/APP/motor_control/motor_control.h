@@ -4,7 +4,7 @@
 #include "main.h"
 #define CONTROL_MODE_SW			1
 //电机编码值转化成角度值    2Π/8191
-#define Ecd_to_Rad		0.000798488132787405781442588526584f
+#define Ecd_to_Rad		0.00076708403213033652507939040001941f
 typedef enum
 {
 	RC_CTRL,		//遥控控制

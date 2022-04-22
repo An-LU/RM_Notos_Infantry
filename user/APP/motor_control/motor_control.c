@@ -9,12 +9,13 @@
 //			(ecd) = (ecd) - (ecd_del) + 8192;		\
 //	}
 //使用内联函数代替宏
-inline static void i_ecd_del(uint16_t ecd, uint16_t ecd_del)
+inline static uint16_t i_ecd_del(uint16_t ecd, uint16_t ecd_del)
 {
 	if(ecd >= ecd_del)
 		ecd -= ecd_del;
 	else
-		ecd = ecd - ecd_del - ecd + 8192;
+		ecd = ecd - ecd_del + 8192;
+	return ecd;
 }	
 
 //电机反馈机械角度规整 0~8191--> -2PI~2PI (rad) (complete)
@@ -23,8 +24,8 @@ fp32 ecd_angle_format(uint16_t ecd, uint16_t last_ecd, const uint16_t offset_ecd
 	int32_t angle = 0;
 	int16_t err_ecd;
 	//计算相对机械角度
-	i_ecd_del(ecd, offset_ecd);
-	i_ecd_del(last_ecd, offset_ecd);
+	ecd = i_ecd_del(ecd, offset_ecd);
+	last_ecd = i_ecd_del(last_ecd, offset_ecd);
 //	ECD_DEL(ecd, offset_ecd);
 //	ECD_DEL(last_ecd, offset_ecd);
 	//机械角度差
@@ -92,6 +93,10 @@ fp32 calc_turn_angle(const fp32 angle_last, const fp32 angle_now, int16_t *turn_
 	{
 		(*turn_circle_num)--;
 		angle = angle_now - 2 * PI;
+	}
+	else
+	{
+		angle = angle_now;
 	}
 	return angle;
 }

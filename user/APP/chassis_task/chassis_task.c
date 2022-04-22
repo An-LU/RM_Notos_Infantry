@@ -227,11 +227,6 @@ static void Chassis_Control(void)
 			Chassis_No_Follow_Mode(&vx_set_channel, &vy_set_channel, &vw_set_channel);
 			break;
 		}
-//		case CHASSIS_GYRO:
-//		{
-//			Chassis_Gyro_Mode(&vx_set_channel, &vy_set_channel, &vw_set_channel);
-//			break;
-//		}
 		case CHASSIS_CALI:
 		{
 			Chassis_Cali_Mode();
@@ -281,11 +276,6 @@ static void Chassis_No_Follow_Mode(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 	//内环计算旋转角速度
 	//chassis_info.chassis_vw_set = PID_Calc(&chassis_info.chassis_angle_pid, 0.0f, *vw_ch);
 	chassis_info.chassis_vw_set = *vw_ch;
-}
-//底盘小陀螺模式
-static void Chassis_Gyro_Mode(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
-{
-	
 }
 //底盘校准模式
 static void Chassis_Cali_Mode(void)

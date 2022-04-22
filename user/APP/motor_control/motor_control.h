@@ -29,6 +29,7 @@
 #endif	/*RC_MODE*/
 //电机编码值转化成角度值    2Π/8191
 #define Ecd_to_Rad		0.00076708403213033652507939040001941f
+#define CIRCLE	(2*PI)	//一圈等于2PI
 typedef enum
 {
 	RC_CTRL,		//遥控控制

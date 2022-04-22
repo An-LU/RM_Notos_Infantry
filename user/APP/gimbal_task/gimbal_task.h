@@ -25,11 +25,7 @@
 #define PITCH_ECD_TURN	6000
 /*******************相关机械角度_END**********************************/
 
-//云台模式选择 左边开关
-#define GIMBAL_MODE_SW		0
-//左边摇杆控制
-#define YAW_CHANNEL			2
-#define PITCH_CHANNEL		3
+
 //遥控器输入死区，因为遥控器存在差异，摇杆在中间，其值不一定为零
 #define GIMBAL_RC_DEADLINE	10
 //yaw，pitch角度与遥控器输入比例

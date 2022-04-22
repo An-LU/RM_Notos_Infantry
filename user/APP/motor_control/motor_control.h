@@ -2,7 +2,31 @@
 #define MOTOR_CONTROL_H
 
 #include "main.h"
-#define CONTROL_MODE_SW			1
+//控制模式选择 左边开关S1
+#define CONTROL_MODE_SW		1
+//云台模式选择 右边开关
+#define GIMBAL_MODE_SW		0
+//底盘模式选择 右边开关S0
+#define CHASSIS_MODE_SW		0
+//#define CHASSIS_X_CHANNEL		1		//底盘前后的遥控器通道号码
+//#define CHASSIS_Y_CHANNEL		0		//左右的遥控器通道号码
+#if RC_MODE == USA	//美国手
+#define CHASSIS_X_CHANNEL		0		//左右的遥控器通道号码
+#define CHASSIS_Y_CHANNEL		1		//底盘前后的遥控器通道号码
+#define CHASSIS_WZ_CHANNEL		4
+#define GIMBAL_YAW_CHANNEL		2
+#define GIMBAL_PITCH_CHANNEL	3
+#elif RC_MODE == JP	//日本手
+#define CHASSIS_X_CHANNEL		3
+#define CHASSIS_Y_CHANNEL		2
+#define CHASSIS_WZ_CHANNEL		4
+#define GIMBAL_YAW_CHANNEL		0
+#define GIMBAL_PITCH_CHANNEL	1
+#elif RC_MODE == CN	//中国手
+#define CHASSIS_X_CHANNEL 1//3是日本手
+#define CHASSIS_Y_CHANNEL 0//2是日本手
+#define CHASSIS_WZ_CHANNEL 2//0是日本手
+#endif	/*RC_MODE*/
 //电机编码值转化成角度值    2Π/8191
 #define Ecd_to_Rad		0.00076708403213033652507939040001941f
 typedef enum

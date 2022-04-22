@@ -10,22 +10,7 @@
 #include "INS_Task.h"
 #include "motor_control.h"
 
-//底盘模式选择 右边开关S0
-#define CHASSIS_MODE_SW			0
-#if RC_MODE == USA	//美国手
-#define CHASSIS_X_CHANNEL 1		//前后的遥控器通道号码
-#define CHASSIS_Y_CHANNEL 0		//左右的遥控器通道号码
-#define CHASSIS_WZ_CHANNEL 2
-//#define CHASSIS_WZ_CHANNEL 2	//在特殊模式下，可以通过遥控器控制旋转
-#elif RC_MODE == JP	//日本手
-#define CHASSIS_X_CHANNEL 3
-#define CHASSIS_Y_CHANNEL 2
-#define CHASSIS_WZ_CHANNEL 0
-#elif RC_MODE == CN	//中国手
-#define CHASSIS_X_CHANNEL 1//3是日本手
-#define CHASSIS_Y_CHANNEL 0//2是日本手
-#define CHASSIS_WZ_CHANNEL 2//0是日本手
-#endif	/*RC_MODE*/
+
 
 //遥控器输入死区，因为遥控器存在差异，摇杆在中间，其值不一定为零
 #define CHASSIS_RC_DEADLINE 10

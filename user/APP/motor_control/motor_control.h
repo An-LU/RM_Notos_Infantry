@@ -29,7 +29,8 @@ fp32 gyro_angle_format(const fp32 angle_last, const fp32 angle_now, uint8_t *tur
 fp32 calc_turn_angle(const fp32 angle_last, const fp32 angle_now, int16_t *turn_circle_num);
 //去除死区
 //void dead_zone_del(const int16_t *input, int16_t *output, int8_t deal);
-
+//初始化初始角度码盘
+void angle_table_init(uint16_t ecd, const uint16_t ecd_del, uint8_t *turn_table_flag);
 
 #endif
 

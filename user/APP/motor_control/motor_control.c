@@ -18,7 +18,11 @@ inline static uint16_t i_ecd_del(uint16_t ecd, uint16_t ecd_del)
 	return ecd;
 }	
 
-//电机反馈机械角度规整 0~8191--> -2PI~2PI (rad) (complete)
+/*brief:	电机反馈机械角度规整 0~8191--> -2PI~2PI (rad)
+*param(in):	angle_last:上一次角度(ecd) angle_now:当前角度(ecd) *turn_table_flag:角度码盘正负(point)
+*param(out):angle:处理后的角度(rad)
+*status:	complete
+*/
 fp32 ecd_angle_format(uint16_t ecd, uint16_t last_ecd, const uint16_t offset_ecd, uint8_t *turn_table_flag)
 {
 	int32_t angle = 0;
@@ -50,8 +54,12 @@ fp32 ecd_angle_format(uint16_t ecd, uint16_t last_ecd, const uint16_t offset_ecd
 	//电机编码值转换为rad
 	return angle * Ecd_to_Rad;
 }
-//陀螺仪角度规整 -PI~PI--> -2PI~2PI (rad) (complete)
-fp32 gyro_angle_format(const fp32 angle_last, const fp32 angle_now, uint8_t* turn_table_flag)
+/*brief:	陀螺仪角度规整 -PI~PI--> -2PI~2PI (rad)
+*param(in):	angle_last:上一次角度(rad) angle_now:当前角度(rad) *turn_table_flag:角度码盘正负(point)
+*param(out):angle:处理后的角度
+*status:	complete
+*/
+fp32 gyro_angle_format(const fp32 angle_last, const fp32 angle_now, uint8_t *turn_table_flag)
 {
 	fp32 angle;
 	if (angle_now > 0 && angle_now < 1.5f && angle_last < 0 && angle_last > -1.5f)
@@ -78,7 +86,11 @@ fp32 gyro_angle_format(const fp32 angle_last, const fp32 angle_now, uint8_t* tur
 	}
 	return angle;
 }
-//计算云台圈数并返回叠加圈数后的角度角度
+/*brief:	计算云台圈数并返回叠加圈数后的角度角度
+*param(in):	angle_last:上一次角度(rad) angle_now:当前角度(rad) *turn_circle_num:圈数(point)
+*param(out):angle:叠加后的角度
+*status:	complete
+*/
 fp32 calc_turn_angle(const fp32 angle_last, const fp32 angle_now, int16_t *turn_circle_num)
 {
 	fp32 angle = 0.0f;
@@ -99,5 +111,18 @@ fp32 calc_turn_angle(const fp32 angle_last, const fp32 angle_now, int16_t *turn_
 		angle = angle_now;
 	}
 	return angle;
+}
+/*brief:	初始化初始角度码盘
+*param(in):	ecd:当前机械角度 ecd_del:校对删除角度 *turn_table_flag:角度码盘正负(point)
+*param(out):void
+*status:	debug
+*/
+void angle_table_init(uint16_t ecd, const uint16_t ecd_del, uint8_t *turn_table_flag)
+{
+	ecd = i_ecd_del(ecd, ecd_del);
+	if(ecd < 4096)
+		*turn_table_flag = 1;
+	else
+		*turn_table_flag = 0;
 }
 

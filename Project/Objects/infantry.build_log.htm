@@ -27,7 +27,60 @@ Project File Date:  04/17/2022
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil v5\ARM\ARMCC\Bin'
 Build target 'standard'
-".\Objects\infantry.axf" - 0 Error(s), 0 Warning(s).
+compiling start_task.c...
+..\user\APP\start_task\start_task.c(57): warning:  #177-D: variable "DetectTask_Handler"  was declared but never referenced
+  static TaskHandle_t DetectTask_Handler;
+..\user\APP\start_task\start_task.c: 1 warning, 0 errors
+compiling miniPC.c...
+..\user\APP\miniPC\miniPC.c(130): warning:  #177-D: variable "a"  was declared but never referenced
+  	uint8_t a = sizeof(stm32_info);
+..\user\APP\miniPC\miniPC.c: 1 warning, 0 errors
+compiling calibrate_task.c...
+..\user\APP\calibrate_task\calibrate_task.c(358): warning:  #177-D: variable "local_cali_t"  was declared but never referenced
+      gimbal_cali_t *local_cali_t = (gimbal_cali_t *)cali;
+..\user\APP\calibrate_task\calibrate_task.c: 1 warning, 0 errors
+compiling motor_control.c...
+compiling gimbal_task.c...
+..\user\APP\gimbal_task\gimbal_task.c(134): warning:  #177-D: variable "gyro_test"  was declared but never referenced
+  	uint8_t gyro_test = 0;		//²âÊÔ
+..\user\APP\gimbal_task\gimbal_task.c(24): warning:  #550-D: variable "Yaw_Can_Set_Voltage"  was set but never used
+  static int16_t Yaw_Can_Set_Voltage = 0, Pitch_Can_Set_Voltage = 0, Shoot_Can_Set_Voltage = 0;
+..\user\APP\gimbal_task\gimbal_task.c(24): warning:  #550-D: variable "Pitch_Can_Set_Voltage"  was set but never used
+  static int16_t Yaw_Can_Set_Voltage = 0, Pitch_Can_Set_Voltage = 0, Shoot_Can_Set_Voltage = 0;
+..\user\APP\gimbal_task\gimbal_task.c(24): warning:  #550-D: variable "Shoot_Can_Set_Voltage"  was set but never used
+  static int16_t Yaw_Can_Set_Voltage = 0, Pitch_Can_Set_Voltage = 0, Shoot_Can_Set_Voltage = 0;
+..\user\APP\gimbal_task\gimbal_task.c(27): warning:  #177-D: variable "yaw_ecd_speed_rc_pid"  was declared but never referenced
+  static PidTypeDef yaw_ecd_speed_rc_pid = { PID_POSITION, YAW_ECD_SPEED_RC_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(29): warning:  #177-D: variable "yaw_gyro_speed_rc_pid"  was declared but never referenced
+  static PidTypeDef yaw_gyro_speed_rc_pid = { PID_POSITION, YAW_GYRO_SPEED_RC_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(35): warning:  #177-D: variable "yaw_ecd_speed_auto_pid"  was declared but never referenced
+  static PidTypeDef yaw_ecd_speed_auto_pid = { PID_POSITION, YAW_ECD_SPEED_AUTO_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(37): warning:  #177-D: variable "yaw_gyro_speed_auto_pid"  was declared but never referenced
+  static PidTypeDef yaw_gyro_speed_auto_pid = { PID_POSITION, YAW_GYRO_SPEED_AUTO_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c: 8 warnings, 0 errors
+compiling chassis_task.c...
+..\user\APP\chassis_task\chassis_task.c(110): warning:  #177-D: variable "gyro_test"  was declared but never referenced
+  	uint8_t gyro_test = 0;		//²âÊÔ
+..\user\APP\chassis_task\chassis_task.c(199): warning:  #177-D: variable "key_vw_channel"  was declared but never referenced
+  	int16_t rc_vw_channel, key_vw_channel, vw_set_channel;
+..\user\APP\chassis_task\chassis_task.c(286): warning:  #177-D: function "Chassis_Gyro_Mode"  was declared but never referenced
+  static void Chassis_Gyro_Mode(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
+..\user\APP\chassis_task\chassis_task.c(36): warning:  #177-D: function "chassis_absolute_angle_process"  was declared but never referenced
+  static fp32 chassis_absolute_angle_process(const fp32, const fp32);
+..\user\APP\chassis_task\chassis_task.c: 4 warnings, 0 errors
+compiling user_task.c...
+..\user\APP\user_task\user_task.c(73): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  		moto_speed = moto->chassis_vx*moto->chassis_vx*12.31;
+..\user\APP\user_task\user_task.c(53): warning:  #550-D: variable "yaw_mode"  was set but never used
+  	const motor_measure_t *yaw_mode;
+..\user\APP\user_task\user_task.c(58): warning:  #550-D: variable "moto_accel"  was set but never used
+  	float moto_speed,moto_accel;
+..\user\APP\user_task\user_task.c: 3 warnings, 0 errors
+compiling shoot.c...
+linking...
+Program Size: Code=47416 RO-data=3476 RW-data=1680 ZI-data=135256  
+FromELF: creating hex file...
+".\Objects\infantry.axf" - 0 Error(s), 18 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -40,7 +93,7 @@ Package Vendor: Keil
   D:\Keil v5\ARM\PACK\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:08
 </pre>
 </body>
 </html>

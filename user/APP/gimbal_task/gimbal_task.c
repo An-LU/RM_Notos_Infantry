@@ -117,15 +117,9 @@ static void Gimbal_Init()
 	gimbal_info.pitch_motor.ecd_now = gimbal_info.pitch_motor.gimbal_motor_measure->ecd;
 	gimbal_info.yaw_motor.ecd_last = gimbal_info.yaw_motor.gimbal_motor_measure->last_ecd;
 	gimbal_info.yaw_motor.ecd_now = gimbal_info.yaw_motor.gimbal_motor_measure->ecd;
-	//初始化码盘所在正负 需要具体更改
-	if(gimbal_info.pitch_motor.gimbal_motor_measure->ecd > 6000)
-		gimbal_info.pitch_motor.turn_table_flag = 0;
-	else
-		gimbal_info.pitch_motor.turn_table_flag = 1;
-	if(gimbal_info.yaw_motor.gimbal_motor_measure->ecd > 4096)
-		gimbal_info.yaw_motor.turn_table_flag = 0;
-	else
-		gimbal_info.yaw_motor.turn_table_flag = 1;
+	//初始化码盘所在正负
+	angle_table_init(gimbal_info.pitch_motor.gimbal_motor_measure->ecd, PITCH_ECD_DEL, &gimbal_info.pitch_motor.turn_table_flag);
+	angle_table_init(gimbal_info.yaw_motor.gimbal_motor_measure->ecd, YAW_ECD_DEL, &gimbal_info.yaw_motor.turn_table_flag);
 	//初始化云台圈数
 	gimbal_info.turn_circle_num = 0;
 	//获取自瞄数据
@@ -538,7 +532,7 @@ const Gimbal_Motor_s *get_gimbal_pitch_motor_point(void)
 }
 fp32 get_gimbal_relative_angle(void)
 {
-	return (gimbal_info.yaw_motor.relative_angle - gimbal_info.turn_circle_num * PI);
+	return (gimbal_info.yaw_motor.relative_angle - gimbal_info.turn_circle_num * 2 * PI);
 }
 
 

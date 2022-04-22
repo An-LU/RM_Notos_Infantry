@@ -137,7 +137,7 @@ typedef struct
 	fp32 speed;				//当前角速度rad/s
 	fp32 speed_set;			//设定角速度
 
-	int16_t ecd_last;		//上一次电机反馈机械角度原始数据
+	uint16_t ecd_last;		//上一次电机反馈机械角度原始数据
 	fp32 gyro_last;			//上一次陀螺仪原始数据
 	fp32 ecd_now;			//当前转换后的角度 -2PI~2PI rad
 	fp32 gyro_now;			//当前转换后的角度 -2PI~2PI rad

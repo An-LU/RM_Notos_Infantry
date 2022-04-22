@@ -94,7 +94,7 @@ static void Chassis_Init(void)
 	//陀螺仪数据获取
 	chassis_info.ins_data = get_INS_Data_point();
 	//初始化圈数
-	chassis_info.chassis_circle_num = 1;
+	chassis_info.chassis_circle_num = 0;
 	//底盘电机反馈数据初始化
 	for(i = 0; i < 4; i++)
 		chassis_info.chassis_motor[i].chassis_motor_measure = get_Chassis_Motor_Measure_Point(i);
@@ -185,7 +185,7 @@ static void Chassis_Updata(void)
 	//chassis_info.chassis_relative_angle = chassis_info.yaw_motor_gimbal->relative_angle;
 	chassis_info.chassis_relative_angle = -get_gimbal_relative_angle();
 	//更新底盘绝对角度 此处更新角度是原始角度 范围是-2PI~2PI 没有计算圈数叠加角度
-	chassis_info.chassis_absolute_yaw = -gyro_yaw_angle + chassis_info.chassis_relative_angle;//陀螺仪角度-云台相对角度(电机传感器提供机械角度)
+	chassis_info.chassis_absolute_yaw = gyro_yaw_angle + chassis_info.chassis_relative_angle;//陀螺仪角度-云台相对角度(电机传感器提供机械角度)
 	chassis_info.chassis_absolute_yaw_last = chassis_info.chassis_absolute_yaw;
 	//计算圈数并叠加圈数角度
 	chassis_info.chassis_yaw = calc_turn_angle(chassis_info.chassis_last_yaw, (chassis_info.chassis_absolute_yaw + chassis_info.chassis_circle_num * 2 * PI), &chassis_info.chassis_circle_num);

@@ -2,7 +2,7 @@
 #include "crc.h"
 #include "string.h"
 
-static uint8_t Judge_Data[100];
+//static uint8_t Judge_Data[100];
 static ext_game_robot_state_t	ext_game_robot_state;
 static ext_shoot_data_t			ext_shoot_data;
 uint8_t Robot_Type;	//机器人类型

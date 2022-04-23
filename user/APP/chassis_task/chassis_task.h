@@ -11,9 +11,6 @@
 #include "motor_control.h"
 
 
-
-//遥控器输入死区，因为遥控器存在差异，摇杆在中间，其值不一定为零
-#define CHASSIS_RC_DEADLINE 10
 //任务开始空闲一段时间
 #define CHASSIS_TASK_INIT_TIME 357
 //底盘任务控制间隔 2ms

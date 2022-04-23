@@ -27,9 +27,14 @@
 #define CHASSIS_Y_CHANNEL 0//2是日本手
 #define CHASSIS_WZ_CHANNEL 2//0是日本手
 #endif	/*RC_MODE*/
+
+//遥控器输入死区，因为遥控器存在差异，摇杆在中间，其值不一定为零
+#define RC_DEADLINE	10
 //电机编码值转化成角度值    2Π/8191
 #define Ecd_to_Rad		0.00076708403213033652507939040001941f
 #define CIRCLE	(2*PI)	//一圈等于2PI
+
+
 typedef enum
 {
 	RC_CTRL,		//遥控控制
@@ -39,10 +44,10 @@ typedef enum
 
 //内联函数代替宏
 //去除死区
-inline static void i_dead_zone_del(const int16_t *input, int16_t *output, int8_t deal)
+inline static void i_dead_zone_del(const int16_t input, int16_t *output, int8_t deal)
 {
-	if (*input > deal || *input < -deal)
-		*output = *input;
+	if (input > deal || input < -deal)
+		*output = input;
 	else
 		*output = 0;	
 }

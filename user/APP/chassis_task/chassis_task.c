@@ -266,7 +266,7 @@ static void Chassis_No_Follow_Mode(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 {
 	int16_t rc_vw_channel;
 	//遥控器死区去除
-	i_dead_zone_del(&chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL], &rc_vw_channel, CHASSIS_RC_DEADLINE);
+	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL], &rc_vw_channel, RC_DEADLINE);
 	//处理旋转角度 增加一定角度
 	*vw_ch = rc_vw_channel * RC_CHASSIS_VW_SEN;
 	//chassis_info.chassis_absolute_yaw_set += *vw_ch;
@@ -300,9 +300,9 @@ static void chassis_rc_process(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 //		rc_vy_channel = chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL];
 //	else
 //		rc_vy_channel = 0;
-	i_dead_zone_del(&chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL], &rc_vx_channel, CHASSIS_RC_DEADLINE);
-	i_dead_zone_del(&chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL], &rc_vy_channel, CHASSIS_RC_DEADLINE);
-	i_dead_zone_del(&chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL], &rc_wz_channel, CHASSIS_RC_DEADLINE);
+	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL], &rc_vx_channel, RC_DEADLINE);
+	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL], &rc_vy_channel, RC_DEADLINE);
+	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL], &rc_wz_channel, RC_DEADLINE);
 	//一阶低通滤波作为斜坡函数输入
 	first_order_filter_cali(&chassis_info.chassis_vx_first_OF, (rc_vx_channel * RC_CHASSIS_VX_SEN));
 	first_order_filter_cali(&chassis_info.chassis_vy_first_OF, (rc_vy_channel * RC_CHASSIS_VY_SEN));

@@ -131,7 +131,7 @@ static void Gimbal_mode_set(void)
 {
 	Gimbal_Mode_e mode = GIMBAL_RELAX;
 	Gimbal_Behavior_e behavior = GIMBAL_NORMAL;
-	uint8_t gyro_test = 0;		//测试
+
 	//控制方式选择
 	if(switch_is_mid(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))		//遥控控制
 	{
@@ -148,16 +148,15 @@ static void Gimbal_mode_set(void)
 	//云台模式选择
 	if(gimbal_info.ctrl_mode == RC_CTRL)
 	{
-		if (switch_is_mid(gimbal_info.gimbal_RC->rc.s[GIMBAL_MODE_SW]))		//中间为遥控
+		if (switch_is_mid(gimbal_info.gimbal_RC->rc.s[GIMBAL_MODE_SW]))
 		{
 			mode = GIMBAL_ENCONDE;//机械模式
 		}
-		else if (switch_is_up(gimbal_info.gimbal_RC->rc.s[GIMBAL_MODE_SW]))		//上拨为自动
+		else if (switch_is_up(gimbal_info.gimbal_RC->rc.s[GIMBAL_MODE_SW]))
 		{
-			//mode = GIMBAL_AUTO;//自动
 			mode = GIMBAL_GYRO;//陀螺仪模式
 		}
-		else if (switch_is_down(gimbal_info.gimbal_RC->rc.s[GIMBAL_MODE_SW]))	//下拨为无力
+		else if (switch_is_down(gimbal_info.gimbal_RC->rc.s[GIMBAL_MODE_SW]))
 		{
 			mode = GIMBAL_RELAX;//云台无力
 		}
@@ -170,7 +169,7 @@ static void Gimbal_mode_set(void)
 			mode = GIMBAL_ENCONDE;
 		
 		//云台行为设置 点击切换
-		if(gimbal_info.gimbal_RC->key_data.key_click.bit.Q )	//Q开启小陀螺chassis_info.chassis_RC->key.bit.Q
+		if(gimbal_info.gimbal_RC->key_data.key_click.bit.Q)	//Q开启小陀螺chassis_info.chassis_RC->key.bit.Q
 			behavior = GIMBAL_NORMAL_GR;	//小陀螺
 	}
 	gimbal_info.gimbal_mode = mode;
@@ -188,38 +187,57 @@ static void Gimbal_Updata(void)
 {
 	const fp32 *gimbal_INT_angle_point = get_INS_angle_point();//获取陀螺仪姿态解算后的数据 角度
 	const fp32 *gimbal_INT_gyro_point = get_MPU6500_Gyro_Data_Point();//获取陀螺仪原始数据 角速度
-	fp32 angle_ecd_Y = 0.0f;	//临时变量
-	fp32 angle_gyro_Y = 0.0f;	//临时变量
+	
+	if(gimbal_info.turn_circle_num == 32767 || gimbal_info.turn_circle_num == -32768)
+	{
+		gimbal_info.yaw_motor.absolute_angle -= gimbal_info.turn_circle_num * CIRCLE;
+		gimbal_info.yaw_motor.absolute_angle_last -= gimbal_info.turn_circle_num * CIRCLE;
+		gimbal_info.turn_circle_num = 0;
+	}
 	//初始化机械角度
 	gimbal_info.pitch_motor.ecd_now = ecd_angle_format(gimbal_info.pitch_motor.gimbal_motor_measure->ecd, gimbal_info.pitch_motor.ecd_last, PITCH_ECD_DEL, &gimbal_info.pitch_motor.turn_table_flag);
 	gimbal_info.yaw_motor.ecd_now = ecd_angle_format( gimbal_info.yaw_motor.gimbal_motor_measure->ecd, gimbal_info.yaw_motor.ecd_last, YAW_ECD_DEL, &gimbal_info.yaw_motor.turn_table_flag);
-	gimbal_info.pitch_motor.relative_angle_last = gimbal_info.pitch_motor.relative_angle;
-	gimbal_info.yaw_motor.relative_angle_last = gimbal_info.yaw_motor.relative_angle;
-	//相对角度更新(relative angle) yaw轴需要计算圈数(rad)
-	//gimbal_info.pitch_motor.relative_angle = 
-	angle_ecd_Y = gimbal_info.yaw_motor.ecd_now + gimbal_info.turn_circle_num * 2 * PI;
-	gimbal_info.yaw_motor.relative_angle = calc_turn_angle(gimbal_info.yaw_motor.relative_angle_last, angle_ecd_Y, &gimbal_info.turn_circle_num);
-	//角速度更新  内环
-	gimbal_info.pitch_motor.speed = gimbal_info.pitch_motor.gimbal_motor_measure->speed_rpm * Ecd_to_Rad;	//电机反馈转速值rpm
-	gimbal_info.yaw_motor.speed = gimbal_info.yaw_motor.gimbal_motor_measure->speed_rpm * Ecd_to_Rad;
-	//更新上一次原始角度
-	gimbal_info.yaw_motor.ecd_last = gimbal_info.yaw_motor.gimbal_motor_measure->ecd;
-	gimbal_info.pitch_motor.ecd_last = gimbal_info.pitch_motor.gimbal_motor_measure->ecd;
-	
 	//初始化陀螺仪角度
 	gimbal_info.yaw_motor.gyro_now = gyro_angle_format(gimbal_info.yaw_motor.gyro_last, *(gimbal_INT_angle_point + INS_YAW_ADDRESS_OFFSET), &gimbal_info.yaw_motor.turn_table_flag);
 	gimbal_info.pitch_motor.gyro_now = gyro_angle_format(gimbal_info.pitch_motor.gyro_last, *(gimbal_INT_angle_point + INS_PITCH_ADDRESS_OFFSET), &gimbal_info.pitch_motor.turn_table_flag);
-	//角度更新  外环
-	gimbal_info.pitch_motor.absolute_angle_last = gimbal_info.pitch_motor.absolute_angle;
-	gimbal_info.yaw_motor.absolute_angle_last = gimbal_info.yaw_motor.absolute_angle;
-	//绝对角度计算(absolute angle) yaw轴需要计算圈数(rad)
-	angle_gyro_Y = gimbal_info.yaw_motor.gyro_now + gimbal_info.turn_circle_num * 2 *PI;
-	//gimbal_info.pitch_motor.absolute_angle = 
-	gimbal_info.yaw_motor.absolute_angle = calc_turn_angle(gimbal_info.yaw_motor.absolute_angle_last, angle_gyro_Y, &gimbal_info.turn_circle_num);
-	//角速度更新  内环
-	gimbal_info.yaw_motor.speed = *(gimbal_INT_gyro_point + INS_GYRO_X_ADDRESS_OFFSET);		//陀螺仪反馈转速rpm
-	gimbal_info.pitch_motor.speed = *(gimbal_INT_gyro_point + INS_GYRO_Y_ADDRESS_OFFSET);
+
+	//角度更新 外环
+	if(gimbal_info.gimbal_mode == GIMBAL_ENCONDE)
+	{
+		fp32 angle_ecd_Y = 0.0f;	//临时变量
+		//上一次角度更新  外环
+		gimbal_info.pitch_motor.relative_angle_last = gimbal_info.pitch_motor.relative_angle;
+		gimbal_info.yaw_motor.relative_angle_last = gimbal_info.yaw_motor.relative_angle;
+		//相对角度更新(relative angle) yaw轴需要计算圈数(rad)
+		gimbal_info.pitch_motor.relative_angle = gimbal_info.pitch_motor.ecd_now;
+		angle_ecd_Y = gimbal_info.yaw_motor.ecd_now + gimbal_info.turn_circle_num * 2 * PI;
+		gimbal_info.yaw_motor.relative_angle = calc_turn_angle(gimbal_info.yaw_motor.relative_angle_last, angle_ecd_Y, &gimbal_info.turn_circle_num);
+		//角速度更新 内环
+		gimbal_info.pitch_motor.speed = gimbal_info.pitch_motor.gimbal_motor_measure->speed_rpm * Ecd_to_Rad;	//电机反馈转速值rpm
+		gimbal_info.yaw_motor.speed = gimbal_info.yaw_motor.gimbal_motor_measure->speed_rpm * Ecd_to_Rad;
+	}
+	else if(gimbal_info.gimbal_mode == GIMBAL_GYRO)
+	{
+		fp32 angle_gyro_Y = 0.0f;	//临时变量
+		//上一次角度更新  外环
+		gimbal_info.pitch_motor.absolute_angle_last = gimbal_info.pitch_motor.absolute_angle;
+		gimbal_info.yaw_motor.absolute_angle_last = gimbal_info.yaw_motor.absolute_angle;
+		//绝对角度计算(absolute angle) yaw轴需要计算圈数(rad)
+		angle_gyro_Y = gimbal_info.yaw_motor.gyro_now + gimbal_info.turn_circle_num * 2 *PI;
+		gimbal_info.pitch_motor.absolute_angle = gimbal_info.pitch_motor.ecd_now;
+		gimbal_info.yaw_motor.absolute_angle = calc_turn_angle(gimbal_info.yaw_motor.absolute_angle_last, angle_gyro_Y, &gimbal_info.turn_circle_num);
+		//角速度更新 内环
+		gimbal_info.yaw_motor.speed = *(gimbal_INT_gyro_point + INS_GYRO_X_ADDRESS_OFFSET);		//陀螺仪反馈转速rpm
+		gimbal_info.pitch_motor.speed = *(gimbal_INT_gyro_point + INS_GYRO_Y_ADDRESS_OFFSET);
+	}
+	else//需修改
+	{
+		gimbal_info.yaw_motor.speed = gimbal_info.yaw_motor.speed_set;
+		gimbal_info.pitch_motor.speed = gimbal_info.pitch_motor.speed_set;
+	}
 	//更新上一次原始角度
+	gimbal_info.yaw_motor.ecd_last = gimbal_info.yaw_motor.gimbal_motor_measure->ecd;
+	gimbal_info.pitch_motor.ecd_last = gimbal_info.pitch_motor.gimbal_motor_measure->ecd;
 	gimbal_info.yaw_motor.gyro_last = *(gimbal_INT_angle_point + INS_YAW_ADDRESS_OFFSET);
 	gimbal_info.pitch_motor.gyro_last = *(gimbal_INT_angle_point + INS_PITCH_ADDRESS_OFFSET);
 	//电压更新
@@ -352,18 +370,6 @@ static void Gimbal_Enconde_mode(fp32 *pitch_add, fp32 *yaw_add, uint8_t vision_f
 				gimbal_info.yaw_motor.voltage_set = PID_Calc(&yaw_ecd_angle_rc_pid, gimbal_info.yaw_motor.speed, gimbal_info.yaw_motor.speed_set);
 			}
 			break;
-		case GIMBAL_NORMAL_GR:
-			gimbal_info.pitch_motor.speed_set = PID_Calc(&pitch_ecd_speed_rc_pid, gimbal_info.pitch_motor.relative_angle, gimbal_info.pitch_motor.relative_angle_set);
-			gimbal_info.pitch_motor.voltage_set = PID_Calc(&pitch_ecd_angle_rc_pid, gimbal_info.pitch_motor.speed, gimbal_info.pitch_motor.speed_set);
-			gimbal_info.yaw_motor.speed_set = PID_Calc(&yaw_gyromode_speed_rc_pid, gimbal_info.yaw_motor.relative_angle, gimbal_info.yaw_motor.relative_angle_set);
-			gimbal_info.yaw_motor.voltage_set = PID_Calc(&yaw_gyromode_angle_rc_pid, gimbal_info.yaw_motor.speed, gimbal_info.yaw_motor.speed_set);
-			break;
-		case GIMBAL_AUTO_GR:
-			gimbal_info.pitch_motor.speed_set = PID_Calc(&pitch_ecd_speed_auto_pid, gimbal_info.pitch_motor.relative_angle, gimbal_info.pitch_motor.relative_angle_set);
-			gimbal_info.pitch_motor.voltage_set = PID_Calc(&pitch_ecd_angle_auto_pid, gimbal_info.pitch_motor.speed, gimbal_info.pitch_motor.speed_set);
-			gimbal_info.yaw_motor.speed_set = PID_Calc(&yaw_gyromode_speed_auto_pid, gimbal_info.yaw_motor.relative_angle, gimbal_info.yaw_motor.relative_angle_set);
-			gimbal_info.yaw_motor.voltage_set = PID_Calc(&yaw_gyromode_angle_auto_pid, gimbal_info.yaw_motor.speed, gimbal_info.yaw_motor.speed_set);
-			break;
 		case GIMBAL_CENTER:	//云台yaw回中 与初始回中有区别
 			//如果角度在回中范围内 该行为有效
 			if(gimbal_info.yaw_motor.relative_angle < 1.5f && gimbal_info.yaw_motor.relative_angle > -1.5f)
@@ -391,8 +397,12 @@ static void Gimbal_Enconde_mode(fp32 *pitch_add, fp32 *yaw_add, uint8_t vision_f
 			gimbal_info.pitch_motor.relative_angle_set += 0;
 			gimbal_info.yaw_motor.relative_angle_set += 0;
 			break;
+		//该行为只在陀螺仪模式下生效
+		case GIMBAL_NORMAL_GR:
+		case GIMBAL_AUTO_GR:
+			gimbal_info.gimbal_behavior = gimbal_info.gimbal_behavior_last;
+			break;
 	}
-
 }
 //云台由陀螺仪控制
 static void Gimbal_Gyro_mode(fp32 *pitch_add, fp32 *yaw_add, uint8_t vision_flag)
@@ -425,24 +435,33 @@ static void Gimbal_Gyro_mode(fp32 *pitch_add, fp32 *yaw_add, uint8_t vision_flag
 			}
 			break;
 		case GIMBAL_NORMAL_GR:			//小陀螺模式下的手动模式
-			
+			gimbal_info.pitch_motor.speed_set = PID_Calc(&pitch_ecd_speed_rc_pid, gimbal_info.pitch_motor.relative_angle, gimbal_info.pitch_motor.relative_angle_set);
+			gimbal_info.pitch_motor.voltage_set = PID_Calc(&pitch_ecd_angle_rc_pid, gimbal_info.pitch_motor.speed, gimbal_info.pitch_motor.speed_set);
+			gimbal_info.yaw_motor.speed_set = PID_Calc(&yaw_gyromode_speed_rc_pid, gimbal_info.yaw_motor.relative_angle, gimbal_info.yaw_motor.relative_angle_set);
+			gimbal_info.yaw_motor.voltage_set = PID_Calc(&yaw_gyromode_angle_rc_pid, gimbal_info.yaw_motor.speed, gimbal_info.yaw_motor.speed_set);
 			break;
 		case GIMBAL_AUTO_GR:			//小陀螺模式下的自瞄模式
-			
-			break;
-		case GIMBAL_TURN:
-		case GIMBAL_CENTER:
-			//在此模式下为底盘回中 在此模式下该行为不执行
-			gimbal_info.gimbal_behavior = GIMBAL_NORMAL;
-			break;
+			gimbal_info.pitch_motor.speed_set = PID_Calc(&pitch_ecd_speed_auto_pid, gimbal_info.pitch_motor.relative_angle, gimbal_info.pitch_motor.relative_angle_set);
+			gimbal_info.pitch_motor.voltage_set = PID_Calc(&pitch_ecd_angle_auto_pid, gimbal_info.pitch_motor.speed, gimbal_info.pitch_motor.speed_set);
+			gimbal_info.yaw_motor.speed_set = PID_Calc(&yaw_gyromode_speed_auto_pid, gimbal_info.yaw_motor.relative_angle, gimbal_info.yaw_motor.relative_angle_set);
+			gimbal_info.yaw_motor.voltage_set = PID_Calc(&yaw_gyromode_angle_auto_pid, gimbal_info.yaw_motor.speed, gimbal_info.yaw_motor.speed_set);			break;
 		case GIMBAL_STOP:
 			gimbal_info.pitch_motor.absolute_angle_set += 0.0f;
 			gimbal_info.yaw_motor.absolute_angle_set += 0.0f;
 			break;
+		case GIMBAL_TURN:
+		case GIMBAL_CENTER:
+			//在此模式下为底盘回中 在此模式下该行为不执行
+			gimbal_info.gimbal_behavior = gimbal_info.gimbal_behavior_last;
+			break;
 	}
 }
+//模式改变处理数据
 static void gimbal_mode_change_save(Gimbal_Mode_e last, Gimbal_Mode_e now)
 {
+	//处理yaw圈数
+	
+	//数据切换更新
 	
 }
 //遥控器数据处理
@@ -454,10 +473,11 @@ static void gimbal_rc_process(fp32 *yaw_add, fp32 *pitch_add)
 	fp32 mouse_x_channel = 0.0f;
 	fp32 mouse_y_channel = 0.0f;
 	//遥控器死区处理
-	if( gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL] > GIMBAL_RC_DEADLINE || gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL] < -GIMBAL_RC_DEADLINE )
-		yaw_channel = gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL];
-	if( gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL] > GIMBAL_RC_DEADLINE || gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL] < -GIMBAL_RC_DEADLINE )
-		pitch_channel = gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL];
+//	if( gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL] > RC_DEADLINE || gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL] < -RC_DEADLINE )
+//		yaw_channel = gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL];
+//	if( gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL] > RC_DEADLINE || gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL] < -RC_DEADLINE )
+//		pitch_channel = gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL];
+	i_dead_zone_del(gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL], &yaw_channel, RC_DEADLINE);
 	//鼠标数据处理 滤波处理?
 	mouse_x_channel = gimbal_info.gimbal_RC->mouse.x * PITCH_MOUSE_SEN;
 	mouse_y_channel = gimbal_info.gimbal_RC->mouse.y * YAW_MOUSE_SEN;
@@ -518,7 +538,8 @@ const Gimbal_Motor_s *get_gimbal_pitch_motor_point(void)
 }
 fp32 get_gimbal_relative_angle(void)
 {
-	return (gimbal_info.yaw_motor.relative_angle - gimbal_info.turn_circle_num * 2 * PI);
+	return gimbal_info.yaw_motor.ecd_now;
+	//return (gimbal_info.yaw_motor.relative_angle - gimbal_info.turn_circle_num * 2 * PI);
 }
 
 

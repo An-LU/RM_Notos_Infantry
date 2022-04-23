@@ -25,9 +25,6 @@
 #define PITCH_ECD_TURN	6000
 /*******************相关机械角度_END**********************************/
 
-
-//遥控器输入死区，因为遥控器存在差异，摇杆在中间，其值不一定为零
-#define GIMBAL_RC_DEADLINE	10
 //yaw，pitch角度与遥控器输入比例
 #define YAW_RC_SEN		0.000003f
 #define PITCH_RC_SEN	-0.000003f
@@ -36,7 +33,7 @@
 #define PITCH_MOUSE_SEN	-0.000001f
 //自瞄数据输入比例
 #define YAW_AUTO_SEN    0.0055f//-0.0055f
-#define PITCH_AUTO_SEN  0.044f//-0.07f //0.005
+#define PITCH_AUTO_SEN  0.0044f//-0.07f //0.005
 //云台回中速度
 #define GIMBAL_RETURN_PITCH	0.0008f
 #define GIMBAL_RETURN_YAW	0.0008f
@@ -134,7 +131,7 @@ typedef struct
 	fp32 speed_set;			//设定角速度
 
 	uint16_t ecd_last;		//上一次电机反馈机械角度原始数据
-	fp32 gyro_last;			//上一次陀螺仪原始数据
+	fp32 gyro_last;			//上一次陀螺仪原始数据 -2PI~2PI rad
 	fp32 ecd_now;			//当前转换后的角度 -2PI~2PI rad
 	fp32 gyro_now;			//当前转换后的角度 -2PI~2PI rad
 	

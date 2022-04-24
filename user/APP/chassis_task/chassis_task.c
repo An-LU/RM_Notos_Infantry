@@ -126,11 +126,11 @@ static void Chassis_Mode_Set(void)
 	{
 		if(switch_is_up(chassis_info.chassis_RC->rc.s[CHASSIS_MODE_SW]))
 		{
-			mode = CHASSIS_NO_FOLLOW;	//底盘不跟随云台
+			mode = CHASSIS_FOLLOW_YAW;		//底盘跟随云台
 		}
 		else if (switch_is_mid(chassis_info.chassis_RC->rc.s[CHASSIS_MODE_SW]))	//中间为遥控
 		{
-			mode = CHASSIS_FOLLOW_YAW;		//底盘跟随云台
+			mode = CHASSIS_NO_FOLLOW;	//底盘不跟随云台
 		}
 		else if (switch_is_down(chassis_info.chassis_RC->rc.s[CHASSIS_MODE_SW]))	//下拨为无力
 		{
@@ -196,10 +196,10 @@ static void Chassis_Updata(void)
 //底盘控制量设置(*)
 static void Chassis_Control(void)
 {
-	int16_t rc_vw_channel, key_vw_channel, vw_set_channel;
-    fp32 rc_vx_channel, rc_vy_channel;
-	fp32 key_vx_channel, key_vy_channel;
-    fp32 vx_set_channel, vy_set_channel;
+	int16_t rc_vw_channel = 0, key_vw_channel = 0, vw_set_channel = 0;
+    fp32 rc_vx_channel = 0.0f, rc_vy_channel = 0.0f;
+	fp32 key_vx_channel = 0.0f, key_vy_channel = 0.0f;
+    fp32 vx_set_channel = 0.0f, vy_set_channel = 0.0f;
 
 	//遥控输入处理
 	chassis_rc_process(&rc_vx_channel, &rc_vy_channel, &rc_vw_channel);
@@ -304,8 +304,8 @@ static void chassis_rc_process(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL], &rc_vy_channel, RC_DEADLINE);
 	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL], &rc_wz_channel, RC_DEADLINE);
 	//一阶低通滤波作为斜坡函数输入
-	first_order_filter_cali(&chassis_info.chassis_vx_first_OF, (rc_vx_channel * RC_CHASSIS_VX_SEN));
-	first_order_filter_cali(&chassis_info.chassis_vy_first_OF, (rc_vy_channel * RC_CHASSIS_VY_SEN));
+	first_order_filter_cali(&chassis_info.chassis_vx_first_OF, (fp32)(rc_vx_channel * RC_CHASSIS_VX_SEN));
+	first_order_filter_cali(&chassis_info.chassis_vy_first_OF, (fp32)(rc_vy_channel * RC_CHASSIS_VY_SEN));
 	*vx_ch = chassis_info.chassis_vx_first_OF.out;
 	*vy_ch = chassis_info.chassis_vy_first_OF.out;
 	*vw_ch = rc_wz_channel;

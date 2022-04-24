@@ -170,6 +170,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>INS_Data</ItemText>
         </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>chassis_info.chassis_RC-&gt;rc.ch[CHASSIS_X_CHANNEL]</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>

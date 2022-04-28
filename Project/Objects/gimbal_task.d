@@ -9,6 +9,7 @@
 .\objects\gimbal_task.o: ..\user\APP\Judge_System\judge_system.h
 .\objects\gimbal_task.o: ..\user\user_lib\user_lib.h
 .\objects\gimbal_task.o: ..\user\APP\motor_control\motor_control.h
+.\objects\gimbal_task.o: ..\User\APP\INS_Task\INS_task.h
 .\objects\gimbal_task.o: ..\User\DSP\Include\arm_math.h
 .\objects\gimbal_task.o: ..\CMSIS\core_cm4.h
 .\objects\gimbal_task.o: D:\Keil v5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -17,7 +18,6 @@
 .\objects\gimbal_task.o: ..\CMSIS\core_cmSimd.h
 .\objects\gimbal_task.o: D:\Keil v5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\gimbal_task.o: D:\Keil v5\ARM\ARMCC\Bin\..\include\math.h
-.\objects\gimbal_task.o: ..\User\APP\INS_Task\INS_Task.h
 .\objects\gimbal_task.o: ..\User\APP\Shoot\shoot.h
 .\objects\gimbal_task.o: ..\User\APP\Detect_Task\Detect_Task.h
 .\objects\gimbal_task.o: ..\User\FreeRTOS\include\FreeRTOSConfig.h

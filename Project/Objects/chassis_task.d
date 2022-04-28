@@ -10,7 +10,7 @@
 .\objects\chassis_task.o: ..\user\APP\miniPC\miniPC.h
 .\objects\chassis_task.o: ..\user\APP\Judge_System\judge_system.h
 .\objects\chassis_task.o: ..\user\APP\motor_control\motor_control.h
-.\objects\chassis_task.o: ..\User\APP\INS_Task\INS_Task.h
+.\objects\chassis_task.o: ..\User\APP\INS_Task\INS_task.h
 .\objects\chassis_task.o: ..\User\hardware\RC\rc.h
 .\objects\chassis_task.o: ..\User\FreeRTOS\include\FreeRTOSConfig.h
 .\objects\chassis_task.o: D:\Keil v5\ARM\ARMCC\Bin\..\include\stdint.h

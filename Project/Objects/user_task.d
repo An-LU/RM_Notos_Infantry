@@ -10,6 +10,7 @@
 .\objects\user_task.o: ..\user\APP\Judge_System\judge_system.h
 .\objects\user_task.o: ..\user\user_lib\user_lib.h
 .\objects\user_task.o: ..\user\APP\motor_control\motor_control.h
+.\objects\user_task.o: ..\User\APP\INS_Task\INS_task.h
 .\objects\user_task.o: ..\User\FreeRTOS\include\FreeRTOSConfig.h
 .\objects\user_task.o: D:\Keil v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\user_task.o: ..\User\FreeRTOS\include\FreeRTOS.h
@@ -24,7 +25,6 @@
 .\objects\user_task.o: D:\Keil v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\user_task.o: ..\User\hardware\LED\led.h
 .\objects\user_task.o: ..\User\APP\Chassis_Task\chassis_task.h
-.\objects\user_task.o: ..\User\APP\INS_Task\INS_Task.h
 .\objects\user_task.o: ..\User\APP\Detect_Task\Detect_Task.h
 .\objects\user_task.o: ..\user\hardware\OLED\oled.h
 .\objects\user_task.o: ..\User\hardware\SYS\sys.h

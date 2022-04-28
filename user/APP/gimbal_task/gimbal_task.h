@@ -8,6 +8,7 @@
 #include "miniPC.h"
 #include "user_lib.h"
 #include "motor_control.h"
+#include "INS_task.h"
 
 //任务初始化 空闲一段时间
 #define GIMBAL_TASK_INIT_TIME 201
@@ -26,7 +27,7 @@
 /*******************相关机械角度_END**********************************/
 
 //yaw，pitch角度与遥控器输入比例
-#define YAW_RC_SEN		0.000003f
+#define YAW_RC_SEN		-0.000003f
 #define PITCH_RC_SEN	-0.000003f
 //鼠标输入比例
 #define YAW_MOUSE_SEN	0.000001f
@@ -57,9 +58,9 @@
 //yaw   遥控 机械模式 角度环(外环)
 #define YAW_ECD_ANGLE_RC_PID_Init	178.0f, 0.0f, 0.0f, 10.0f, 0.0f
 //yaw   遥控 陀螺仪模式 速度环(内环)
-#define YAW_GYRO_SPEED_RC_PID_Init	1500.0f, 0.0f, 0.5f, MAX_GM6020_CAN_VOLTAGE, 5000.0f
+#define YAW_GYRO_SPEED_RC_PID_Init	1000.0f, 0.0f, 0.5f, MAX_GM6020_CAN_VOLTAGE, 5000.0f
 //yaw   遥控 陀螺仪模式 角度环(外环)
-#define YAW_GYRO_ANGLE_RC_PID_Init	120.0f, 0.0f, 0.5f, 10.0f, 0.0f
+#define YAW_GYRO_ANGLE_RC_PID_Init	100.0f, 0.0f, 0.0f, 10.0f, 0.0f
 //pitch 遥控 机械模式 速度环(内环)
 #define PITCH_ECD_SPEED_RC_PID_Init	1000.0f, 0.0f, 2.0f, MAX_GM6020_CAN_VOLTAGE, 5000.0f
 //pitch 遥控 机械模式 角度环(外环)
@@ -94,7 +95,7 @@
 #define YAW_gyromode_SPEED_AUTO_PID_Init	1000.0f, 0.0f, 2.0f, MAX_GM6020_CAN_VOLTAGE, 5000.0f 
 //陀螺仪模式 自瞄 角度环(外环)
 #define YAW_gyromode_ANGLE_AUTO_PID_Init	150.0f, 0.0f, 0.0f, 10.0f, 0.0f
-/*****************************以上为陀螺仪模式下YAW轴的PID参数*****************************/
+/*****************************以上为小陀螺模式下YAW轴的PID参数*****************************/
 /**********************PID_END************************/
 typedef enum
 {
@@ -139,12 +140,15 @@ typedef struct
 	int16_t voltage_give_last;
 	int16_t voltage_give;	//发送的电压值
 	
-	uint8_t turn_table_flag;//角度盘正负 1为正 0为负
+	uint8_t ecd_turn_table;//角度盘正负 1为正 0为负
+	uint8_t gyro_turn_table;//角度盘正负 1为正 0为负
+	//uint8_t turn_table_flag;//角度盘正负 1为正 0为负
 } Gimbal_Motor_s;
 typedef struct
 {
 	const RC_ctrl_s *gimbal_RC;				//云台使用的遥控器指针
 	Auto_Gimbal_Ctrl_t *gimbal_AUTO_ctrl;	//自瞄角度数据
+	const INS_Data_s *ins_data;			//陀螺仪相关角度
 	
 	Control_Mode_e ctrl_mode;				//控制模式
 	Gimbal_Mode_e gimbal_mode;				//云台模式

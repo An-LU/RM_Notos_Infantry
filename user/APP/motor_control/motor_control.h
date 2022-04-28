@@ -11,8 +11,8 @@
 //#define CHASSIS_X_CHANNEL		1		//底盘前后的遥控器通道号码
 //#define CHASSIS_Y_CHANNEL		0		//左右的遥控器通道号码
 #if RC_MODE == USA	//美国手
-#define CHASSIS_X_CHANNEL		0		//左右的遥控器通道号码
-#define CHASSIS_Y_CHANNEL		1		//底盘前后的遥控器通道号码
+#define CHASSIS_X_CHANNEL		1		//左右的遥控器通道号码
+#define CHASSIS_Y_CHANNEL		0		//底盘前后的遥控器通道号码
 #define CHASSIS_WZ_CHANNEL		4
 #define GIMBAL_YAW_CHANNEL		2
 #define GIMBAL_PITCH_CHANNEL	3

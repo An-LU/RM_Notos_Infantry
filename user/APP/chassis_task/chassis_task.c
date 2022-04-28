@@ -26,14 +26,14 @@ static void Chassis_Send_Current(void);
 static void Chassis_Relax_Mode(void);
 static void Chassis_Follow_Yaw_Mode(fp32 *, fp32 *, int16_t *);
 static void Chassis_No_Follow_Mode(fp32 *, fp32 *, int16_t *);
-static void Chassis_Gyro_Mode(fp32 *, fp32 *, int16_t *);
+//static void Chassis_Gyro_Mode(fp32 *, fp32 *, int16_t *);
 static void Chassis_Cali_Mode(void);
 static void Chassis_Stop_Mode(void);
 
 static void chassis_rc_process(fp32 *vx_ch, fp32 *vy_ch, int16_t *wz_ch);
 static void chassis_key_process(fp32 *, fp32 *);
 static void chassis_mode_change_save(Chassis_Mode_e , Chassis_Mode_e );
-static fp32 chassis_absolute_angle_process(const fp32, const fp32);
+//static fp32 chassis_absolute_angle_process(const fp32, const fp32);
 //static fp32 chassis_calc_turn_angle(const fp32 *, fp32 *);
 
 void chassis_task(void *pvParameters)
@@ -60,6 +60,7 @@ void chassis_task(void *pvParameters)
 		Chassis_Calc_Current();
 		//底盘电机电流输出
 		Chassis_Send_Current();
+		
 	}
 }
 //底盘初始化(*)
@@ -290,7 +291,7 @@ static void Chassis_Stop_Mode(void)
 //遥控控制模式(*)
 static void chassis_rc_process(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 {
-	int16_t rc_vx_channel, rc_vy_channel, rc_wz_channel;
+	int16_t rc_vx_channel = 0, rc_vy_channel = 0, rc_wz_channel = 0;
 	//遥控死区处理
 //	if(chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL] > CHASSIS_RC_DEADLINE || chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL] < -CHASSIS_RC_DEADLINE)
 //		rc_vx_channel = chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL];
@@ -303,9 +304,20 @@ static void chassis_rc_process(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL], &rc_vx_channel, RC_DEADLINE);
 	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL], &rc_vy_channel, RC_DEADLINE);
 	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL], &rc_wz_channel, RC_DEADLINE);
+	*vx_ch = rc_vx_channel * RC_CHASSIS_VX_SEN;
+	*vy_ch = rc_vy_channel * RC_CHASSIS_VY_SEN;
 	//一阶低通滤波作为斜坡函数输入
-	first_order_filter_cali(&chassis_info.chassis_vx_first_OF, (fp32)(rc_vx_channel * RC_CHASSIS_VX_SEN));
-	first_order_filter_cali(&chassis_info.chassis_vy_first_OF, (fp32)(rc_vy_channel * RC_CHASSIS_VY_SEN));
+	first_order_filter_cali(&chassis_info.chassis_vx_first_OF, *vx_ch);
+	first_order_filter_cali(&chassis_info.chassis_vy_first_OF, *vy_ch);
+    //停止信号，不需要缓慢加速，直接减速到零
+    if (*vx_ch < RC_DEADLINE * RC_CHASSIS_VX_SEN && *vx_ch > -RC_DEADLINE * RC_CHASSIS_VX_SEN)
+    {
+        chassis_info.chassis_vx_first_OF.out = 0.0f;
+    }
+    if (*vy_ch < RC_DEADLINE * RC_CHASSIS_VY_SEN && *vy_ch > -RC_DEADLINE * RC_CHASSIS_VY_SEN)
+    {
+        chassis_info.chassis_vy_first_OF.out = 0.0f;
+    }
 	*vx_ch = chassis_info.chassis_vx_first_OF.out;
 	*vy_ch = chassis_info.chassis_vy_first_OF.out;
 	*vw_ch = rc_wz_channel;

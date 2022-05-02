@@ -16,14 +16,10 @@
 #define GIMBAL_CONTROL_TIME_MS 1
 
 /******电机相关机械角度 更换电机时需要debug修改！！！******************/
-//#define YAW_ECD_MAX		2709		//云台机械角度限位
-//#define YAW_ECD_MIN		7520//6793
 #define YAW_ECD_DEL		7520//655			//云台回中时电机的机械角度
-//#define YAW_ECD_TURN	4000		//云台回中时判断正负码盘机械角度 小于此值为正码盘 大于此值为负码盘 用于回中时 其他状态不用
 #define PITCH_ECD_MAX	5966//3811
 #define PITCH_ECD_MIN	4830//2036
 #define PITCH_ECD_DEL	5412//2696
-//#define PITCH_ECD_TURN	6000
 /*******************相关机械角度_END**********************************/
 
 //yaw，pitch角度与遥控器输入比例

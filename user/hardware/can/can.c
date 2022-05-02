@@ -94,7 +94,7 @@ uint8_t CAN2_mode_init(uint8_t tsjw, uint8_t tbs2, uint8_t tbs1, uint16_t brp, u
     CAN_InitStructure.CAN_BS2 = tbs2;
     CAN_InitStructure.CAN_Prescaler = brp;
     CAN_Init(CAN2, &CAN_InitStructure);
-
+	
     CAN_FilterInitStructure.CAN_FilterNumber = 14;
     CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
     CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;

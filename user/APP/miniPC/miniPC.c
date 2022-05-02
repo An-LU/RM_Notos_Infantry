@@ -4,7 +4,7 @@
 #include "crc.h"
 #include "string.h"
 #include "gimbal_task.h"
-#include "gimbal_behaviour.h"
+//#include "gimbal_behaviour.h"
 #include "INS_Task.h"
 #include "usart.h"
 
@@ -44,6 +44,7 @@ void Vision_Read_Data(uint8_t *Recv_Info)
 	uint16_t vision_data_len = 0;
 	uint16_t CMD_ID = 0;
 	uint8_t num = 0;
+	Vision_Get_NewData = FALSE;
 	while(1)
 	{
 		if(Recv_Info[num] == VISION_HEAD_SOF)
@@ -71,7 +72,6 @@ void Vision_Read_Data(uint8_t *Recv_Info)
 			}
 		}
 	}
-	//Vision_Get_NewData = TRUE;
 }
 
 //视觉数据是否更新

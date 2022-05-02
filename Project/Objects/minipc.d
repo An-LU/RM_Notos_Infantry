@@ -12,6 +12,5 @@
 .\objects\minipc.o: ..\user\user_lib\user_lib.h
 .\objects\minipc.o: ..\user\APP\motor_control\motor_control.h
 .\objects\minipc.o: ..\User\APP\INS_Task\INS_task.h
-.\objects\minipc.o: ..\User\APP\Gimbal_Task\gimbal_behaviour.h
 .\objects\minipc.o: ..\user\hardware\usart\usart.h
 .\objects\minipc.o: ..\User\hardware\SYS\sys.h

@@ -11,8 +11,6 @@
 #include "Detect_Task.h"
 
 
-//#include "keyboard.h"
-
 //底盘信息
 static Chassis_Control_s chassis_info;
 
@@ -60,7 +58,8 @@ void chassis_task(void *pvParameters)
 		Chassis_Calc_Current();
 		//底盘电机电流输出
 		Chassis_Send_Current();
-		
+		//系统延时
+		vTaskDelay(CHASSIS_CONTROL_TIME_MS);
 	}
 }
 //底盘初始化(*)
@@ -85,8 +84,6 @@ static void Chassis_Init(void)
 	PID_Init(&chassis_info.chassis_angle_pid, PID_POSITION, chassis_yaw_pid, CHASSIS_ANGLE_PID_MAX_OUT, CHASSIS_ANGLE_PID_MAX_IOUT);
 	//底盘模式初始化
 	chassis_info.chassis_mode = CHASSIS_RELAX;
-	//云台yaw轴电机数据获取，用于计算底盘绝对角度
-	//chassis_info.yaw_motor_gimbal = get_gimbal_yaw_motor_point();
 	//滤波初始化
     first_order_filter_init(&chassis_info.chassis_vx_first_OF, CHASSIS_CONTROL_TIME, chassis_x_order_filter);
     first_order_filter_init(&chassis_info.chassis_vy_first_OF, CHASSIS_CONTROL_TIME, chassis_y_order_filter);
@@ -94,6 +91,11 @@ static void Chassis_Init(void)
 	chassis_info.chassis_RC = get_remote_control_point();
 	//陀螺仪数据获取
 	chassis_info.ins_data = get_INS_Data_point();
+	//初始化陀螺仪码盘正负
+	if(chassis_info.ins_data->angle_yaw >= 0)
+		chassis_info.chassis_angle_table = 1;
+	else
+		chassis_info.chassis_angle_table = 0;
 	//初始化圈数
 	chassis_info.chassis_circle_num = 0;
 	//底盘电机反馈数据初始化
@@ -108,7 +110,7 @@ static void Chassis_Mode_Set(void)
 	Chassis_Mode_e mode = CHASSIS_RELAX;
 	Chassis_Behavior_e behavior = CHASSIS_NORMAL;
 	static uint8_t mode_status;
-	uint8_t gyro_test = 0;		//测试
+//	uint8_t gyro_test = 0;		//测试
 	//控制方式选择
 	if(switch_is_mid(chassis_info.chassis_RC->rc.s[CONTROL_MODE_SW]))		//遥控控制
 	{
@@ -116,7 +118,7 @@ static void Chassis_Mode_Set(void)
 	}
 	else if(switch_is_up(chassis_info.chassis_RC->rc.s[CONTROL_MODE_SW]))		//键盘控制
 	{
-		chassis_info.ctrl_mode = KEY_CTRL;
+		chassis_info.ctrl_mode = PC_CTRL;
 	}
 	else	//遥控模式下开启摩擦轮
 	{
@@ -129,7 +131,7 @@ static void Chassis_Mode_Set(void)
 		{
 			mode = CHASSIS_FOLLOW_YAW;		//底盘跟随云台
 		}
-		else if (switch_is_mid(chassis_info.chassis_RC->rc.s[CHASSIS_MODE_SW]))	//中间为遥控
+		else if (switch_is_mid(chassis_info.chassis_RC->rc.s[CHASSIS_MODE_SW]))	//中间
 		{
 			mode = CHASSIS_NO_FOLLOW;	//底盘不跟随云台
 		}
@@ -137,6 +139,7 @@ static void Chassis_Mode_Set(void)
 		{
 			mode = CHASSIS_RELAX;		//底盘无力
 		}
+		behavior = CHASSIS_NORMAL;
 	}
 	else
 	{
@@ -170,8 +173,16 @@ static void Chassis_Updata(void)
 	fp32 gyro_yaw_angle = *(chassis_INT_angle_point + INS_YAW_ADDRESS_OFFSET);
 	static fp32 gyro_yaw_last_angle;
 	uint8_t i;
+	
+	if(chassis_info.chassis_circle_num == 32767 || chassis_info.chassis_circle_num == -32768)
+	{
+		chassis_info.chassis_yaw -= chassis_info.chassis_circle_num * CIRCLE;
+		chassis_info.chassis_yaw_last -= chassis_info.chassis_circle_num * CIRCLE;
+		chassis_info.chassis_circle_num = 0;
+	}
 	//处理陀螺仪角度范围为-2PI~2PI
-	gyro_yaw_angle =  gyro_angle_format(gyro_yaw_last_angle, gyro_yaw_angle, &chassis_info.chassis_table_flag);
+	//gyro_yaw_angle =  gyro_angle_format(gyro_yaw_last_angle, chassis_info.ins_data->angle_yaw, &chassis_info.chassis_table_flag);
+	gyro_yaw_angle =  gyro_angle_format(gyro_yaw_last_angle, gyro_yaw_angle, &chassis_info.chassis_angle_table);
 	//更新电机速度
 	for(i = 0; i < 4; i++)
 	{
@@ -181,18 +192,17 @@ static void Chassis_Updata(void)
 	//更新底盘速度
 	chassis_info.chassis_vx = (chassis_info.chassis_motor[0].speed - chassis_info.chassis_motor[1].speed + chassis_info.chassis_motor[2].speed - chassis_info.chassis_motor[3].speed) * MOTOR_SPEED_TO_CHASSIS_SPEED_VX;
 	chassis_info.chassis_vy = (-chassis_info.chassis_motor[0].speed - chassis_info.chassis_motor[1].speed + chassis_info.chassis_motor[2].speed + chassis_info.chassis_motor[3].speed) * MOTOR_SPEED_TO_CHASSIS_SPEED_VY;
-	chassis_info.chassis_vx = (-chassis_info.chassis_motor[0].speed - chassis_info.chassis_motor[1].speed - chassis_info.chassis_motor[2].speed - chassis_info.chassis_motor[3].speed) * MOTOR_SPEED_TO_CHASSIS_SPEED_VW;
+	chassis_info.chassis_vw = (-chassis_info.chassis_motor[0].speed - chassis_info.chassis_motor[1].speed - chassis_info.chassis_motor[2].speed - chassis_info.chassis_motor[3].speed) * MOTOR_SPEED_TO_CHASSIS_SPEED_VW / MOTOR_DISTANCE_TO_CENTER;;
 	//更新底盘与云台的相对角度 即为云台电机的相对角度 (-2PI~2PI)
-	//chassis_info.chassis_relative_angle = chassis_info.yaw_motor_gimbal->relative_angle;
 	chassis_info.chassis_relative_angle = -get_gimbal_relative_angle();
 	//更新底盘绝对角度 此处更新角度是原始角度 范围是-2PI~2PI 没有计算圈数叠加角度
 	chassis_info.chassis_absolute_yaw = gyro_yaw_angle + chassis_info.chassis_relative_angle;//陀螺仪角度-云台相对角度(电机传感器提供机械角度)
-	chassis_info.chassis_absolute_yaw_last = chassis_info.chassis_absolute_yaw;
 	//计算圈数并叠加圈数角度
-	chassis_info.chassis_yaw = calc_turn_angle(chassis_info.chassis_last_yaw, (chassis_info.chassis_absolute_yaw + chassis_info.chassis_circle_num * 2 * PI), &chassis_info.chassis_circle_num);
-	chassis_info.chassis_last_yaw = chassis_info.chassis_yaw;
+	chassis_info.chassis_yaw = calc_turn_angle(chassis_info.chassis_yaw_last, (chassis_info.chassis_absolute_yaw + chassis_info.chassis_circle_num * 2 * PI), &chassis_info.chassis_circle_num);
+	chassis_info.chassis_yaw_last = chassis_info.chassis_yaw;
 	//更新陀螺仪上一次角度 用于计算处理陀螺仪边界值
 	gyro_yaw_last_angle = gyro_yaw_angle;
+	//chassis_info.chassis_absolute_yaw_last = chassis_info.chassis_absolute_yaw;
 }
 //底盘控制量设置(*)
 static void Chassis_Control(void)
@@ -246,37 +256,41 @@ static void Chassis_Relax_Mode(void)
 	chassis_info.chassis_vx_set = 0.0f;
 	chassis_info.chassis_vy_set = 0.0f;
 	chassis_info.chassis_vw_set = 0.0f;
-	chassis_info.chassis_absolute_yaw_set = chassis_info.chassis_absolute_yaw;
+	//chassis_info.chassis_absolute_yaw_set = chassis_info.chassis_absolute_yaw;
+	chassis_info.chassis_yaw = chassis_info.chassis_yaw_set = chassis_info.chassis_absolute_yaw;
 }
 //底盘跟随云台模式 前进方向由云台决定(*)
 static void Chassis_Follow_Yaw_Mode(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 {
+	fp32 rc_vw_channel;
 	fp32 relative_angle_sin, relative_angle_cos;//相对角度的正弦余弦值 sin(relative_angle) cos(relative_angle)
 	relative_angle_sin = arm_sin_f32(chassis_info.chassis_relative_angle);
 	relative_angle_cos = arm_cos_f32(chassis_info.chassis_relative_angle);
+	rc_vw_channel = *vw_ch * RC_CHASSIS_VW_SEN;
 	//云台指向前进平移方向的vx、vy分解成底盘车头指向方向的vx、vy 
-	chassis_info.chassis_vx_set = *vx_ch * relative_angle_cos - *vy_ch * relative_angle_cos;	//vx*cos(a)-vy*sin(a)
-	chassis_info.chassis_vy_set = *vx_ch * relative_angle_sin + *vy_ch * relative_angle_sin;	//vx*sin(a)+vy*cos(a)
+	chassis_info.chassis_vx_set = *vx_ch * relative_angle_cos + *vy_ch * relative_angle_sin;	//vx*cos(a)-vy*sin(a)
+	chassis_info.chassis_vy_set = -*vx_ch * relative_angle_sin + *vy_ch * relative_angle_cos;	//vx*sin(a)+vy*cos(a)
 	//底盘绝对角度 叠加旋转角度 该模式下vw通道输入值处理为角度rad(-2PI,2PI) (需要修改)
-	chassis_info.chassis_absolute_yaw_set = chassis_info.chassis_absolute_yaw + *vw_ch * CHASSIS_ANGLE_Z_RC_SEN;
+	chassis_info.chassis_yaw_set = chassis_info.chassis_yaw + *vw_ch * CHASSIS_ANGLE_Z_RC_SEN;
 	//内环PID计算旋转线速度
-	chassis_info.chassis_vw_set = PID_Calc(&chassis_info.chassis_angle_pid, chassis_info.chassis_absolute_yaw, chassis_info.chassis_absolute_yaw_set);
+	chassis_info.chassis_vw_set = rc_vw_channel;
+	//chassis_info.chassis_vw_set = PID_Calc(&chassis_info.chassis_angle_pid, chassis_info.chassis_yaw, chassis_info.chassis_yaw_set);
 }
 //底盘不跟随云台模式 前进方向由底盘决定
 static void Chassis_No_Follow_Mode(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 {
-	int16_t rc_vw_channel;
+	fp32 rc_vw_channel;
 	//遥控器死区去除
-	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL], &rc_vw_channel, RC_DEADLINE);
+	//i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL], &rc_vw_channel, RC_DEADLINE);
 	//处理旋转角度 增加一定角度
-	*vw_ch = rc_vw_channel * RC_CHASSIS_VW_SEN;
+	rc_vw_channel = *vw_ch * RC_CHASSIS_VW_SEN;
 	//chassis_info.chassis_absolute_yaw_set += *vw_ch;
 	//速度限幅
 	chassis_info.chassis_vx_set = fp32_constrain(*vx_ch, -MAX_CHASSIS_SPEED_X, MAX_CHASSIS_SPEED_X);
 	chassis_info.chassis_vy_set = fp32_constrain(*vy_ch, -MAX_CHASSIS_SPEED_Y, MAX_CHASSIS_SPEED_Y);
 	//内环计算旋转角速度
 	//chassis_info.chassis_vw_set = PID_Calc(&chassis_info.chassis_angle_pid, 0.0f, *vw_ch);
-	chassis_info.chassis_vw_set = *vw_ch;
+	chassis_info.chassis_vw_set = rc_vw_channel;//*vw_ch;
 }
 //底盘校准模式
 static void Chassis_Cali_Mode(void)
@@ -293,14 +307,6 @@ static void chassis_rc_process(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 {
 	int16_t rc_vx_channel = 0, rc_vy_channel = 0, rc_wz_channel = 0;
 	//遥控死区处理
-//	if(chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL] > CHASSIS_RC_DEADLINE || chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL] < -CHASSIS_RC_DEADLINE)
-//		rc_vx_channel = chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL];
-//	else
-//		rc_vx_channel = 0;
-//	if(chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL] > CHASSIS_RC_DEADLINE || chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL] < -CHASSIS_RC_DEADLINE)
-//		rc_vy_channel = chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL];
-//	else
-//		rc_vy_channel = 0;
 	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL], &rc_vx_channel, RC_DEADLINE);
 	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL], &rc_vy_channel, RC_DEADLINE);
 	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL], &rc_wz_channel, RC_DEADLINE);
@@ -343,10 +349,20 @@ static void chassis_mode_change_save(Chassis_Mode_e last_mode, Chassis_Mode_e no
 //麦轮运动分解 (complete)
 static void chassis_mecanum_calc(const fp32 vx_set, const fp32 vy_set, const fp32 vw_set, fp32 *wheel_rpm)
 {
-	wheel_rpm[0] = vx_set - vy_set - vw_set * (ROBOT_LENGTH_A + ROBOT_LENGTH_B) * CHASSIS_VW_SEN;
-	wheel_rpm[1] = vx_set + vy_set + vw_set * (ROBOT_LENGTH_A + ROBOT_LENGTH_B) * CHASSIS_VW_SEN;
-	wheel_rpm[2] = -vx_set + vy_set - vw_set * (ROBOT_LENGTH_A + ROBOT_LENGTH_B) * CHASSIS_VW_SEN;
-	wheel_rpm[3] = -vx_set - vy_set + vw_set * (ROBOT_LENGTH_A + ROBOT_LENGTH_B) * CHASSIS_VW_SEN;
+//	wheel_rpm[0] = vx_set - vy_set - vw_set * (ROBOT_LENGTH_A + ROBOT_LENGTH_B) * CHASSIS_VW_SEN;
+//	wheel_rpm[1] = vx_set + vy_set + vw_set * (ROBOT_LENGTH_A + ROBOT_LENGTH_B) * CHASSIS_VW_SEN;
+//	wheel_rpm[2] = -vx_set + vy_set - vw_set * (ROBOT_LENGTH_A + ROBOT_LENGTH_B) * CHASSIS_VW_SEN;
+//	wheel_rpm[3] = -vx_set - vy_set + vw_set * (ROBOT_LENGTH_A + ROBOT_LENGTH_B) * CHASSIS_VW_SEN;
+	
+//	wheel_rpm[0] = vx_set - vy_set - vw_set * (ROBOT_LENGTH_A + ROBOT_LENGTH_B);// * CHASSIS_VW_SEN;
+//	wheel_rpm[1] = -vx_set - vy_set + vw_set * (ROBOT_LENGTH_A + ROBOT_LENGTH_B);// * CHASSIS_VW_SEN;
+//	wheel_rpm[2] = vx_set + vy_set + vw_set * (ROBOT_LENGTH_A + ROBOT_LENGTH_B);// * CHASSIS_VW_SEN;
+//	wheel_rpm[3] = -vx_set + vy_set - vw_set * (ROBOT_LENGTH_A + ROBOT_LENGTH_B);// * CHASSIS_VW_SEN;
+	wheel_rpm[0] = vx_set - vy_set - vw_set * MOTOR_DISTANCE_TO_CENTER;// * CHASSIS_VW_SEN;
+	wheel_rpm[1] = -vx_set - vy_set - vw_set * MOTOR_DISTANCE_TO_CENTER;// * CHASSIS_VW_SEN;
+	wheel_rpm[2] = vx_set + vy_set - vw_set * MOTOR_DISTANCE_TO_CENTER;// * CHASSIS_VW_SEN;
+	wheel_rpm[3] = -vx_set + vy_set - vw_set * MOTOR_DISTANCE_TO_CENTER;// * CHASSIS_VW_SEN;
+	
 }
 //底盘电机控制电流计算 (complete)
 static void Chassis_Calc_Current(void)
@@ -355,7 +371,7 @@ static void Chassis_Calc_Current(void)
 	fp32 temp = 0.0f, vector_rate = 0.0f, max_vector = 0.0f;
 	fp32 wheel_speed[4] = {0.0f};
 	//麦轮运动分解
-	chassis_mecanum_calc(chassis_info.chassis_vx_set, chassis_info.chassis_vy_set, chassis_info.chassis_vw, wheel_speed);
+	chassis_mecanum_calc(chassis_info.chassis_vx_set, chassis_info.chassis_vy_set, chassis_info.chassis_vw_set, wheel_speed);
 	//计算轮子控制最大速度，并限制其最大速度
 	for (i = 0; i < 4; i++)
 	{
@@ -388,9 +404,9 @@ static void Chassis_Send_Current(void)
 	}	
 	else 
     {
-		CAN_CMD_CHASSIS(0,0,0,0);
-//		CAN_CMD_CHASSIS(chassis_info.chassis_motor[0].give_current, chassis_info.chassis_motor[1].give_current,
-//						chassis_info.chassis_motor[2].give_current, chassis_info.chassis_motor[3].give_current);
+		//CAN_CMD_CHASSIS(0,0,0,0);
+		CAN_CMD_CHASSIS(chassis_info.chassis_motor[0].give_current, chassis_info.chassis_motor[1].give_current,
+						chassis_info.chassis_motor[2].give_current, chassis_info.chassis_motor[3].give_current);
 	}
 }
 const Chassis_Control_s *get_classis_info_point(void)

@@ -1,7 +1,6 @@
 #include "Gimbal_Task.h"
 
 #include "arm_math.h"
-//#include "gimbal_behaviour.h"
 //#include "user_lib.h"
 #include "INS_Task.h"
 #include "RC_DT7.h"
@@ -68,7 +67,7 @@ void GIMBAL_task(void *pvParameters)
     //云台初始化
     Gimbal_Init();
     //射击初始化
-    shoot_init();
+    //shoot_init();
     //判断电机是否都上线
     while (toe_is_error(YawGimbalMotorTOE) || toe_is_error(PitchGimbalMotorTOE)|| toe_is_error(TriggerMotorTOE) )
     {
@@ -85,7 +84,7 @@ void GIMBAL_task(void *pvParameters)
 		//云台控制量计算
 		Gimbal_Control();
 		//更新射击电流
-        Shoot_Can_Set_Voltage = shoot_control_loop();  
+        //Shoot_Can_Set_Voltage = shoot_control_loop();  
 		//发送控制电压
 		Gimbal_Send_Voltage();
 //		if (switch_is_mid(gimbal_info.gimbal_RC->rc.s[GIMBAL_MODE_SW]))
@@ -156,7 +155,7 @@ static void Gimbal_mode_set(void)
 	}
 	else if(switch_is_up(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))		//键盘控制
 	{
-		gimbal_info.ctrl_mode = KEY_CTRL;
+		gimbal_info.ctrl_mode = PC_CTRL;
 	}
 	else	//遥控模式下开启摩擦轮
 	{
@@ -567,7 +566,6 @@ const Gimbal_Motor_s *get_gimbal_pitch_motor_point(void)
 fp32 get_gimbal_relative_angle(void)
 {
 	return gimbal_info.yaw_motor.ecd_now;
-	//return (gimbal_info.yaw_motor.relative_angle - gimbal_info.turn_circle_num * 2 * PI);
 }
 
 

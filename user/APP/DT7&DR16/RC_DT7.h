@@ -75,7 +75,7 @@ inline static bool switch_is_down(uint8_t s) { return (s == 2); }
 //º¯ÊýÉùÃ÷
 extern void remote_control_init(void);
 extern const RC_ctrl_s *get_remote_control_point(void);
-extern uint8_t RC_data_is_error(void);
+extern bool RC_data_is_error(void);
 extern void slove_RC_lost(void);
 extern void slove_data_error(void);
 

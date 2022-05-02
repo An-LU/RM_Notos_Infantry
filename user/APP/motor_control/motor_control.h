@@ -38,7 +38,7 @@
 typedef enum
 {
 	RC_CTRL,		//Ò£¿Ø¿ØÖÆ
-	KEY_CTRL		//¼üÅÌ¿ØÖÆ
+	PC_CTRL			//¼üÊó¿ØÖÆ
 }Control_Mode_e;
 
 

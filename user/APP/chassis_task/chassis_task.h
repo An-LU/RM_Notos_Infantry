@@ -21,13 +21,13 @@
 #define CHASSIS_CONTROL_FREQUENCE 500.0f
 //遥控转换比例
 #define RC_CHASSIS_VX_SEN	0.006f
-#define RC_CHASSIS_VY_SEN	0.005f
-#define RC_CHASSIS_VW_SEN	0.0001f
+#define RC_CHASSIS_VY_SEN	-0.005f
+#define RC_CHASSIS_VW_SEN	0.003f
 //键盘转换比例
 #define KEY_CHASSIS_VX_SEN	0.006f
 #define KEY_CHASSIS_VY_SEN	0.005f
 //旋转角度输入比例
-#define CHASSIS_ANGLE_Z_RC_SEN 0.000002f
+#define CHASSIS_ANGLE_Z_RC_SEN 0.0002f
 //底盘遥控滤波系数
 #define CHASSIS_X_ACCEL_NUM 0.1666666667f
 #define CHASSIS_Y_ACCEL_NUM 0.3333333333f
@@ -52,6 +52,7 @@
 #define ROBOT_LENGTH_A 0.5f
 #define ROBOT_LENGTH_B 0.4f
 
+#define MOTOR_DISTANCE_TO_CENTER 0.2f
 //底盘3508最大can发送电流值
 #define MAX_M3508_CAN_CURRENT 16000.0f
 //PID参数
@@ -96,14 +97,13 @@ typedef struct
 typedef struct
 {
 	const RC_ctrl_s *chassis_RC;			//遥控数据
-	//const Gimbal_Motor_s *yaw_motor_gimbal;   //底盘使用到yaw云台电机的相对角度来计算底盘的欧拉角
-	const INS_Data_s *ins_data;			//陀螺仪相关角度
-	
+	const INS_Data_s *ins_data;				//陀螺仪相关角度
+	//模式数据
 	Control_Mode_e ctrl_mode;				//控制模式
 	Chassis_Mode_e chassis_mode;			//底盘模式
 	Chassis_Mode_e chassis_last_mode;
-	Chassis_Behavior_e chassis_behavior;
-	
+	Chassis_Behavior_e chassis_behavior;	//底盘行为
+	//底盘电机数据
 	PidTypeDef chassis_angle_pid;			//底盘整体旋转角度环
 	Chassis_Motor_s chassis_motor[4];		//底盘四个电机
 	first_order_filter_type_t chassis_vx_first_OF;	//一阶低通滤波代替斜坡函数生成前进方向速度
@@ -115,20 +115,16 @@ typedef struct
 	fp32 chassis_vy_set;
 	fp32 chassis_vw;		//底盘旋转角速度rad/s		ra:旋转角度rotation angle
 	fp32 chassis_vw_set;	//底盘旋转角速度设定值
-	
-	fp32 chassis_relative_angle;		//底盘与云台的相对角度rad/s 用于计算跟随云台模式下的前进方向
-//	fp32 chassis_relative_angle_set;	//设置相对云台控制角度
-//	fp32 chassis_relative_angle_last;
-	fp32 chassis_absolute_yaw;			//底盘绝对角度 陀螺仪减去云台yaw的角度 底盘角度固定码盘
-	fp32 chassis_absolute_yaw_set;
-	fp32 chassis_absolute_yaw_last;		//上一次角度
-	
-	fp32 chassis_yaw;					//叠加圈数后的底盘yaw角度
-	fp32 chassis_last_yaw;
-	
+	//底盘角度数据
+	fp32 chassis_relative_angle;		//底盘与云台的相对角度rad/s 用于计算跟随云台模式下的前进方向 -2PI~2PI rad
+	fp32 chassis_absolute_yaw;			//底盘绝对角度 陀螺仪减去云台yaw的角度 底盘角度固定码盘 -2PI~2PI rad
+	//fp32 chassis_absolute_yaw_last;		//上一次角度
+	fp32 chassis_yaw;					//叠加圈数后的底盘yaw角度 实际角度
+	fp32 chassis_yaw_set;
+	fp32 chassis_yaw_last;
 	//fp32 chassis_absolute_pitch;	//爬坡模式可用 后续可增加底盘模式
-	
-	uint8_t chassis_table_flag;//角度盘正负 1为正 0为负
+	//底盘旋转相关数据
+	uint8_t chassis_angle_table;//角度盘正负 1为正 0为负
 	int16_t chassis_circle_num;//圈数
 }Chassis_Control_s;//底盘总数据
 

@@ -11,7 +11,6 @@
 .\objects\shoot.o: ..\user\APP\Judge_System\judge_system.h
 .\objects\shoot.o: ..\user\APP\motor_control\motor_control.h
 .\objects\shoot.o: ..\User\APP\INS_Task\INS_task.h
-.\objects\shoot.o: ..\User\APP\Gimbal_Task\gimbal_behaviour.h
 .\objects\shoot.o: ..\User\APP\Detect_Task\Detect_Task.h
 .\objects\shoot.o: ..\User\hardware\LASER\laser.h
 .\objects\shoot.o: ..\User\hardware\FRIC\fric.h

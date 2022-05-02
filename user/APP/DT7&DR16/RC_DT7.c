@@ -38,7 +38,7 @@ const RC_ctrl_s *get_remote_control_point(void)
 }
 
 //判断遥控器数据是否出错，
-uint8_t RC_data_is_error(void)
+bool RC_data_is_error(void)
 {
     //使用了go to语句 方便出错统一处理遥控器变量数据归零
     if (RC_abs(rc_ctrl.rc.ch[0]) > RC_CHANNAL_ERROR_VALUE)

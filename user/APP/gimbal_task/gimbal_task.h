@@ -1,5 +1,5 @@
-#ifndef __GIMBAL_TASK_H__
-#define __GIMBAL_TASK_H__
+#ifndef __GIMBAL_TASK_H
+#define __GIMBAL_TASK_H
 
 #include "main.h"
 #include "CAN_Receive.h"
@@ -35,7 +35,7 @@
 #define GIMBAL_RETURN_PITCH	0.0008f
 #define GIMBAL_RETURN_YAW	0.0008f
 //滤波系数
-#define GIMBAL_YAW_ACCEL_NUM	0.3333333333f//0.1666666667f
+#define GIMBAL_YAW_ACCEL_NUM	0.1666666667f
 #define GIMBAL_PITCH_ACCEL_NUM	0.3333333333f
 //GM6020最大CAN发送电压
 #define MAX_GM6020_CAN_VOLTAGE	30000.0f

@@ -48,12 +48,12 @@
 #define IST8310_RX_BUF_DATA_OFFSET 15
 #endif
 
-#define MPU6500_TEMPERATURE_PID_KP 1.0f//原始值1600.0f //温度控制PID的kp
-#define MPU6500_TEMPERATURE_PID_KI 0.0f    //温度控制PID的ki
+#define MPU6500_TEMPERATURE_PID_KP 1600.f//1.0f//原始值1600.0f //温度控制PID的kp
+#define MPU6500_TEMPERATURE_PID_KI 0.2f//0.0f    //温度控制PID的ki
 #define MPU6500_TEMPERATURE_PID_KD 0.0f    //温度控制PID的kd
 
-#define MPU6500_TEMPERATURE_PID_MAX_OUT 0.0f  //温度控制PID的max_out  原始4500
-#define MPU6500_TEMPERATURE_PID_MAX_IOUT 0.0f //温度控制PID的max_iout 原始4400
+#define MPU6500_TEMPERATURE_PID_MAX_OUT 4500.0f//0.0f  //温度控制PID的max_out  原始4500
+#define MPU6500_TEMPERATURE_PID_MAX_IOUT 4400.0f//0.0f //温度控制PID的max_iout 原始4400
 
 #define INS_DELTA_TICK 1 //任务调用的间隔
 

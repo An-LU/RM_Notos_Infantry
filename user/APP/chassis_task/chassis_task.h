@@ -66,21 +66,22 @@
 #define CHASSIS_ANGLE_PID_KP 40.0f  //40
 #define CHASSIS_ANGLE_PID_KI 0.0f
 #define CHASSIS_ANGLE_PID_KD 0.0f
-#define CHASSIS_ANGLE_PID_MAX_OUT 6.0f
+#define CHASSIS_ANGLE_PID_MAX_OUT 1.0f//6.0f
 #define CHASSIS_ANGLE_PID_MAX_IOUT 0.2f
 
 typedef enum
 {
 	CHASSIS_RELAX,				//底盘无力
 	CHASSIS_STOP,				//底盘停止
-	CHASSIS_FOLLOW_YAW,			//底盘跟随云台模式 前进方向由云台决定
-	CHASSIS_NO_FOLLOW,			//底盘不跟随云台模式 前进方向由底盘决定
+	CHASSIS_FOLLOW_GIMBAL,		//底盘跟随云台模式 底盘旋转角度由云台提供
+	CHASSIS_RAW,				//底盘原生模式 云台底盘分离控制 前进方向由底盘决定
+	CHASSIS_GYRO,				//底盘陀螺仪模式 前进方向由云台(陀螺仪)决定
 	CHASSIS_CALI				//校准模式
 }Chassis_Mode_e;//底盘模式
 typedef enum
 {
 	CHASSIS_NORMAL,				//普通
-	CHASSIS_GYRO,				//小陀螺
+	CHASSIS_GYRO_OPEN,			//小陀螺
 	CHASSIS_CENTER				//底盘回中
 }Chassis_Behavior_e;//底盘行为
 typedef struct
@@ -116,7 +117,8 @@ typedef struct
 	fp32 chassis_vw;		//底盘旋转角速度rad/s		ra:旋转角度rotation angle
 	fp32 chassis_vw_set;	//底盘旋转角速度设定值
 	//底盘角度数据
-	fp32 chassis_relative_angle;		//底盘与云台的相对角度rad/s 用于计算跟随云台模式下的前进方向 -2PI~2PI rad
+	fp32 chassis_relative_angle;		//底盘与云台的相对角度rad/s 用于计算陀螺仪模式下的前进方向 -2PI~2PI rad
+	//fp32 chassis_relative_angle_last;
 	fp32 chassis_absolute_yaw;			//底盘绝对角度 陀螺仪减去云台yaw的角度 底盘角度固定码盘 -2PI~2PI rad
 	//fp32 chassis_absolute_yaw_last;		//上一次角度
 	fp32 chassis_yaw;					//叠加圈数后的底盘yaw角度 实际角度

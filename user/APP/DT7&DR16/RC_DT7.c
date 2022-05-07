@@ -166,7 +166,7 @@ void key_scan(RC_ctrl_s *rc_ctrl)
 		{
 			if(rc_ctrl->key_data.key_press_time[i] > 50)
 			{
-				rc_ctrl->key_data.key_click.key_code |= index;		//单机标志位置1
+				rc_ctrl->key_data.key_click.key_code |= index;		//单击标志位置1
 			}
 			else
 			{

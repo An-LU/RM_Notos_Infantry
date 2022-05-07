@@ -15,6 +15,8 @@
 #define CHASSIS_TASK_INIT_TIME 357
 //底盘任务控制间隔 2ms
 #define CHASSIS_CONTROL_TIME_MS 2
+//底盘更新模拟量间隔
+#define CHASSIS_REMOVE_DELAY_MS 10
 //底盘任务控制间隔 0.002s
 #define CHASSIS_CONTROL_TIME 0.002
 //在速度更新使用		底盘任务控制频率
@@ -26,11 +28,18 @@
 //键盘转换比例
 #define KEY_CHASSIS_VX_SEN	0.006f
 #define KEY_CHASSIS_VY_SEN	0.005f
+//键盘模拟量最大值
+#define KEY_CHASSIS_VALUE_MAX 660
+//底盘小陀螺模拟量
+#define KEY_CHASSIS_ROTATE_SPEED 330
 //旋转角度输入比例
 #define CHASSIS_ANGLE_Z_RC_SEN 0.0002f
 //底盘遥控滤波系数
-#define CHASSIS_X_ACCEL_NUM 0.2222222222f//0.1666666667f
-#define CHASSIS_Y_ACCEL_NUM 0.1222222222f//0.1666666667f//0.3333333333f
+#define RC_X_ACCEL_NUM 0.2222222222f//0.1666666667f
+#define RC_Y_ACCEL_NUM 0.1222222222f//0.1666666667f//0.3333333333f
+//底盘键盘滤波系数
+#define KEY_X_ACCEL_NUM 0.2222222222f//0.1666666667f
+#define KEY_Y_ACCEL_NUM 0.1222222222f//0.1666666667f//0.3333333333f
 //旋转输入比例
 #define CHASSIS_VW_SEN		0.000415809748903494517209f
 //底盘3508最大can发送电流值
@@ -107,8 +116,10 @@ typedef struct
 	//底盘电机数据
 	PidTypeDef chassis_angle_pid;			//底盘整体旋转角度环
 	Chassis_Motor_s chassis_motor[4];		//底盘四个电机
-	first_order_filter_type_t chassis_vx_first_OF;	//一阶低通滤波代替斜坡函数生成前进方向速度
-	first_order_filter_type_t chassis_vy_first_OF;	//一阶低通滤波代替斜坡函数生成左右方向速度
+	first_order_filter_type_t rc_vx_first_OF;	//一阶低通滤波代替斜坡函数生成前进方向速度
+	first_order_filter_type_t rc_vy_first_OF;	//一阶低通滤波代替斜坡函数生成左右方向速度
+	first_order_filter_type_t key_vx_first_OF;	//一阶低通滤波代替斜坡函数生成前进方向速度
+	first_order_filter_type_t key_vy_first_OF;	//一阶低通滤波代替斜坡函数生成左右方向速度
 	//底盘移动数据
 	fp32 chassis_vx;	//m/s
 	fp32 chassis_vx_set;

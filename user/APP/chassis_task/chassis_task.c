@@ -31,8 +31,6 @@ static void Chassis_Stop_Mode(void);
 static void chassis_rc_process(fp32 *vx_ch, fp32 *vy_ch, int16_t *wz_ch);
 static void chassis_key_process(fp32 *, fp32 *, int16_t *);
 static void chassis_mode_change_save(Chassis_Mode_e , Chassis_Mode_e );
-//static fp32 chassis_absolute_angle_process(const fp32, const fp32);
-//static fp32 chassis_calc_turn_angle(const fp32 *, fp32 *);
 
 void chassis_task(void *pvParameters)
 {
@@ -71,8 +69,10 @@ static void Chassis_Init(void)
 	//底盘角度环pid值
 	const static fp32 chassis_yaw_pid[3] = {CHASSIS_ANGLE_PID_KP, CHASSIS_ANGLE_PID_KI, CHASSIS_ANGLE_PID_KD};
 	//滤波系数
-	const static fp32 chassis_x_order_filter[1] = {CHASSIS_X_ACCEL_NUM};
-	const static fp32 chassis_y_order_filter[1] = {CHASSIS_Y_ACCEL_NUM};
+	const static fp32 rc_x_order_filter[1] = {RC_X_ACCEL_NUM};
+	const static fp32 rc_y_order_filter[1] = {RC_Y_ACCEL_NUM};
+	const static fp32 key_x_order_filter[1] = {RC_X_ACCEL_NUM};
+	const static fp32 key_y_order_filter[1] = {RC_Y_ACCEL_NUM};
 	for(i = 0; i < 4; i++)
 	{
 		//电机反馈数据获取
@@ -85,8 +85,10 @@ static void Chassis_Init(void)
 	//底盘模式初始化
 	chassis_info.chassis_mode = CHASSIS_RELAX;
 	//滤波初始化
-    first_order_filter_init(&chassis_info.chassis_vx_first_OF, CHASSIS_CONTROL_TIME, chassis_x_order_filter);
-    first_order_filter_init(&chassis_info.chassis_vy_first_OF, CHASSIS_CONTROL_TIME, chassis_y_order_filter);
+    first_order_filter_init(&chassis_info.rc_vx_first_OF, CHASSIS_CONTROL_TIME, rc_x_order_filter);
+    first_order_filter_init(&chassis_info.rc_vy_first_OF, CHASSIS_CONTROL_TIME, rc_y_order_filter);
+    first_order_filter_init(&chassis_info.key_vx_first_OF, CHASSIS_CONTROL_TIME, key_x_order_filter);
+    first_order_filter_init(&chassis_info.key_vy_first_OF, CHASSIS_CONTROL_TIME, key_y_order_filter);
 	//遥控器数据初始化
 	chassis_info.chassis_RC = get_remote_control_point();
 	//陀螺仪数据获取
@@ -335,24 +337,69 @@ static void chassis_rc_process(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 	*vx_ch = rc_vx_channel * RC_CHASSIS_VX_SEN;
 	*vy_ch = rc_vy_channel * RC_CHASSIS_VY_SEN;
 	//一阶低通滤波作为斜坡函数输入
-	first_order_filter_cali(&chassis_info.chassis_vx_first_OF, *vx_ch);
-	first_order_filter_cali(&chassis_info.chassis_vy_first_OF, *vy_ch);
+	first_order_filter_cali(&chassis_info.rc_vx_first_OF, *vx_ch);
+	first_order_filter_cali(&chassis_info.rc_vy_first_OF, *vy_ch);
     //停止信号，不需要缓慢加速，直接减速到零
     if (*vx_ch < RC_DEADLINE * RC_CHASSIS_VX_SEN && *vx_ch > -RC_DEADLINE * RC_CHASSIS_VX_SEN)
     {
-        chassis_info.chassis_vx_first_OF.out = 0.0f;
+        chassis_info.rc_vx_first_OF.out = 0.0f;
     }
     if (*vy_ch < RC_DEADLINE * RC_CHASSIS_VY_SEN && *vy_ch > -RC_DEADLINE * RC_CHASSIS_VY_SEN)
     {
-        chassis_info.chassis_vy_first_OF.out = 0.0f;
+        chassis_info.rc_vy_first_OF.out = 0.0f;
     }
-	*vx_ch = chassis_info.chassis_vx_first_OF.out;
-	*vy_ch = chassis_info.chassis_vy_first_OF.out;
+	*vx_ch = chassis_info.rc_vx_first_OF.out;
+	*vy_ch = chassis_info.rc_vy_first_OF.out;
 	*vw_ch = rc_wz_channel;//只处理死区 原始通道
+}
+static void chassis_move_time_process(uint16_t *remove_channel)
+{
+	static portTickType chassis_current_time = 0;
+	static uint32_t chassis_delay_time = 0;
+	chassis_current_time = xTaskGetTickCount();
+	//更新一次移动量
+	if(chassis_current_time >= chassis_delay_time)
+	{
+		chassis_delay_time = chassis_current_time + CHASSIS_REMOVE_DELAY_MS;
+		if(*remove_channel < KEY_CHASSIS_VALUE_MAX)
+			(*remove_channel)++;
+	}
 }
 static void chassis_key_process(fp32 *vx_ch, fp32 *vy_ch ,int16_t *vw_ch)
 {
-	
+	//模拟摇杆四个通道 max:660
+	static uint16_t fron_ch, back_ch, left_ch, right_ch;
+	//移动处理
+	if(chassis_info.chassis_RC->key.bit.W) //按下增加通道量
+		chassis_move_time_process(&fron_ch);
+	else		//松开通道量直接减为0
+		fron_ch = 0;
+	if(chassis_info.chassis_RC->key.bit.S)
+		chassis_move_time_process(&back_ch);
+	else
+		back_ch = 0;
+	if(chassis_info.chassis_RC->key.bit.A)
+		chassis_move_time_process(&left_ch);
+	else
+		left_ch = 0;
+	if(chassis_info.chassis_RC->key.bit.D)
+		chassis_move_time_process(&right_ch);
+	else
+		right_ch = 0;
+	//底盘小陀螺固定速度
+	if(chassis_info.chassis_RC->key.bit.SHIFT)
+		*vw_ch = KEY_CHASSIS_ROTATE_SPEED;
+	*vx_ch = (fron_ch - back_ch) * KEY_CHASSIS_VX_SEN;
+	*vy_ch = (left_ch - right_ch) * KEY_CHASSIS_VY_SEN;
+	//一阶滤波作为斜坡函数
+	first_order_filter_cali(&chassis_info.key_vx_first_OF, *vx_ch);
+	first_order_filter_cali(&chassis_info.key_vx_first_OF, *vy_ch);
+    if (*vx_ch == 0.0f)
+        chassis_info.key_vx_first_OF.out = 0.0f;		//滤波输出直接为0 否则会一直减少下去直到溢出
+    if (*vy_ch == 0.0f)
+        chassis_info.key_vy_first_OF.out = 0.0f;
+	*vx_ch = chassis_info.key_vx_first_OF.out;
+	*vy_ch = chassis_info.key_vy_first_OF.out;
 }
 
 //模式切换保存数据(*)

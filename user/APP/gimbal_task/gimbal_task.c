@@ -30,6 +30,14 @@ static PidTypeDef yaw_gyro_angle_rc_pid = { PID_POSITION, YAW_GYRO_ANGLE_RC_PID_
 //pitch 手动控制PID
 static PidTypeDef pitch_ecd_speed_rc_pid = { PID_POSITION, PITCH_ECD_SPEED_RC_PID_Init };
 static PidTypeDef pitch_ecd_angle_rc_pid = { PID_POSITION, PITCH_ECD_ANGLE_RC_PID_Init };
+//yaw 鼠标控制PID
+static PidTypeDef yaw_ecd_speed_mouse_pid = { PID_POSITION, YAW_ECD_SPEED_MOUSE_PID_Init };
+static PidTypeDef yaw_ecd_angle_mouse_pid = { PID_POSITION, YAW_ECD_ANGLE_MOUSE_PID_Init };
+static PidTypeDef yaw_gyro_speed_mouse_pid = { PID_POSITION, YAW_GYRO_SPEED_MOUSE_PID_Init };
+static PidTypeDef yaw_gyro_angle_mouse_pid = { PID_POSITION, YAW_GYRO_ANGLE_MOUSE_PID_Init };
+//pitch 鼠标控制PID
+static PidTypeDef pitch_ecd_speed_mouse_pid = { PID_POSITION, PITCH_ECD_SPEED_MOUSE_PID_Init };
+static PidTypeDef pitch_ecd_angle_mouse_pid = { PID_POSITION, PITCH_ECD_ANGLE_MOUSE_PID_Init };
 //yaw 自动控制PID
 static PidTypeDef yaw_ecd_speed_auto_pid = { PID_POSITION, YAW_ECD_SPEED_AUTO_PID_Init };
 static PidTypeDef yaw_ecd_angle_auto_pid = { PID_POSITION, YAW_ECD_ANGLE_AUTO_PID_Init };
@@ -59,7 +67,7 @@ static void Gimbal_Gyro_mode(fp32 *, fp32 *, uint8_t);
 static void gimbal_mode_change_save(Gimbal_Mode_e, Gimbal_Mode_e);
 static void gimbal_rc_process(fp32 *, fp32 *);
 static void gimbal_auto_process(fp32 *, fp32 *);
-
+static void gimbal_pitch_limit(fp32 *);
 void GIMBAL_task(void *pvParameters)
 {
     //等待陀螺仪任务更新陀螺仪数据
@@ -87,11 +95,7 @@ void GIMBAL_task(void *pvParameters)
         //Shoot_Can_Set_Voltage = shoot_control_loop();  
 		//发送控制电压
 		Gimbal_Send_Voltage();
-//		if (switch_is_mid(gimbal_info.gimbal_RC->rc.s[GIMBAL_MODE_SW]))
-//			CAN_CMD_GIMBAL(0, -5000, 0, 0);
-//		else
-//			CAN_CMD_GIMBAL(0, 0, 0, 0);
-//		//系统延时
+		//系统延时
         vTaskDelay(GIMBAL_CONTROL_TIME_MS);
 
 #if INCLUDE_uxTaskGetStackHighWaterMark
@@ -301,11 +305,14 @@ static void Gimbal_Control(void)
 		case GIMBAL_GYRO:		//陀螺仪控制模式
 		{
 			Gimbal_Gyro_mode(&add_pitch_angle, &add_yaw_angle, vision_flag);
+			//gimbal_pitch_limit(&gimbal_info.pitch_motor.absolute_angle_set);	//pitch轴限位
+			gimbal_pitch_limit(&gimbal_info.pitch_motor.relative_angle_set);
 			break;
 		}
 		case GIMBAL_ENCONDE:	//机械控制模式
 		{
 			Gimbal_Enconde_mode(&add_pitch_angle, &add_yaw_angle, vision_flag);
+			gimbal_pitch_limit(&gimbal_info.pitch_motor.relative_angle_set);	//pitch轴限位
 			break;
 		}
 	}
@@ -494,20 +501,33 @@ static void gimbal_mode_change_save(Gimbal_Mode_e last, Gimbal_Mode_e now)
 		gimbal_info.yaw_motor.absolute_angle = gimbal_info.yaw_motor.absolute_angle_set = gimbal_info.yaw_motor.gyro_now;
 	}
 }
+//pitch轴软件限位
+static void gimbal_pitch_limit(fp32 *pitch_angle)
+{
+	//如果已回中
+	if(gimbal_info.turn_mid_flag)
+	{
+		*pitch_angle = *pitch_angle > PITCH_ECD_MAX ? PITCH_ECD_MAX : *pitch_angle;
+		*pitch_angle = *pitch_angle < PITCH_ECD_MIN ? PITCH_ECD_MIN : *pitch_angle;
+	}
+}
 //遥控器数据处理
 static void gimbal_rc_process(fp32 *yaw_add, fp32 *pitch_add)
 {
 	//初始化相关变量
-	int16_t yaw_channel = 0;
-	int16_t pitch_channel = 0;
+	int16_t yaw_channel = 0, mouse_x_ch = 0;
+	int16_t pitch_channel = 0, mouse_y_ch = 0;
 	fp32 mouse_x_channel = 0.0f;
 	fp32 mouse_y_channel = 0.0f;
 	//遥控器死区处理
 	i_dead_zone_del(gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL], &yaw_channel, RC_DEADLINE);
 	i_dead_zone_del(gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL], &pitch_channel, RC_DEADLINE);
-	//鼠标数据处理 滤波处理?
-	mouse_x_channel = gimbal_info.gimbal_RC->mouse.x * PITCH_MOUSE_SEN;
-	mouse_y_channel = gimbal_info.gimbal_RC->mouse.y * YAW_MOUSE_SEN;
+	//鼠标数据处理 鼠标数据是线速度还是其他?
+	//死区处理
+	i_dead_zone_del(gimbal_info.gimbal_RC->mouse.x, &mouse_x_ch, MOUSE_DEADLINE);
+	i_dead_zone_del(gimbal_info.gimbal_RC->mouse.y, &mouse_y_ch, MOUSE_DEADLINE);
+	mouse_x_channel = mouse_x_ch * YAW_MOUSE_SEN;
+	mouse_y_channel = mouse_y_ch * PITCH_MOUSE_SEN;
 	//遥控数据比例转换
 	*yaw_add = yaw_channel * YAW_RC_SEN + mouse_x_channel;
 	*pitch_add = pitch_channel * PITCH_RC_SEN + mouse_y_channel;
@@ -526,19 +546,8 @@ static void gimbal_auto_process(fp32 *yaw_add, fp32 *pitch_add)
 //发送控制电压
 static void Gimbal_Send_Voltage(void)
 {
-	//电机是否反装
-#if YAW_TURN
-	Yaw_Can_Set_Voltage = -gimbal_info.yaw_motor.voltage_give;
-#else
 	Yaw_Can_Set_Voltage = gimbal_info.yaw_motor.voltage_give;
-#endif
-
-#if PITCH_TURN
-	Pitch_Can_Set_Voltage = -gimbal_info.pitch_motor.voltage_give;
-#else
 	Pitch_Can_Set_Voltage = gimbal_info.pitch_motor.voltage_give;
-#endif
-
 	//云台在遥控器掉线状态即relax 状态，can指令为0，不使用Voltage设置为零的方法，是保证遥控器掉线一定使得云台停止
 	if (!(toe_is_error(YawGimbalMotorTOE) && toe_is_error(PitchGimbalMotorTOE) && toe_is_error(TriggerMotorTOE)))
 	{
@@ -555,6 +564,8 @@ static void Gimbal_Send_Voltage(void)
 		}
 	}
 }
+
+
 const Gimbal_Motor_s *get_gimbal_yaw_motor_point(void)
 {
     return &gimbal_info.yaw_motor;

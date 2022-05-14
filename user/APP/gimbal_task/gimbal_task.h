@@ -66,6 +66,19 @@
 //pitch 遥控 陀螺仪模式 角度环(外环)
 #define PITCH_GYRO_ANGLE_RC_PID_Init	150.0f, 0.0f, 0.0f, 10.0f, 0.0f
 /*****************************以上为手动控制下的PID参数*****************************/
+//yaw   遥控 机械模式 速度环(内环)
+#define YAW_ECD_SPEED_MOUSE_PID_Init	1500.0f, 0.0f, 0.5f, MAX_GM6020_CAN_VOLTAGE, 5000.0f
+//yaw   遥控 机械模式 角度环(外环)
+#define YAW_ECD_ANGLE_MOUSE_PID_Init	178.0f, 0.0f, 0.0f, 10.0f, 0.0f
+//yaw   遥控 陀螺仪模式 速度环(内环)
+#define YAW_GYRO_SPEED_MOUSE_PID_Init	1000.0f, 0.0f, 0.5f, MAX_GM6020_CAN_VOLTAGE, 5000.0f
+//yaw   遥控 陀螺仪模式 角度环(外环)
+#define YAW_GYRO_ANGLE_MOUSE_PID_Init	100.0f, 0.0f, 0.0f, 10.0f, 0.0f
+//pitch 遥控 机械模式 速度环(内环)
+#define PITCH_ECD_SPEED_MOUSE_PID_Init	1000.0f, 0.0f, 2.0f, MAX_GM6020_CAN_VOLTAGE, 5000.0f
+//pitch 遥控 机械模式 角度环(外环)
+#define PITCH_ECD_ANGLE_MOUSE_PID_Init	200.0f, 0.0f, 0.0f, 10.0f, 0.0f
+/*****************************以上为鼠标控制下的PID参数*****************************/
 //yaw 自瞄 机械模式 速度环(内环)
 #define YAW_ECD_SPEED_AUTO_PID_Init	1500.0f, 0.0f, 0.5f, MAX_GM6020_CAN_VOLTAGE, 5000.0f
 //yaw 自瞄 机械模式 角度环(外环)

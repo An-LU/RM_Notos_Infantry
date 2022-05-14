@@ -81,19 +81,19 @@ void start_task(void *pvParameters)
                 (UBaseType_t)Chassis_TASK_PRIO,
                 (TaskHandle_t *)&ChassisTask_Handler);
 
-    xTaskCreate((TaskFunction_t)UserTask,//心跳程序获取姿态角
-                (const char *)"UserTask",
-                (uint16_t)User_STK_SIZE,
-                (void *)NULL,
-                (UBaseType_t)User_TASK_PRIO,
-                (TaskHandle_t *)&UserTask_Handler);
+//    xTaskCreate((TaskFunction_t)UserTask,//心跳程序获取姿态角
+//                (const char *)"UserTask",
+//                (uint16_t)User_STK_SIZE,
+//                (void *)NULL,
+//                (UBaseType_t)User_TASK_PRIO,
+//                (TaskHandle_t *)&UserTask_Handler);
 
-    xTaskCreate((TaskFunction_t)calibrate_task,//校准
-                (const char *)"CaliTask",
-                (uint16_t)CALIBRATE_STK_SIZE,
-                (void *)NULL,
-                (UBaseType_t)CALIBRATE_TASK_PRIO,
-                (TaskHandle_t *)&CalibrateTask_Handler);
+//    xTaskCreate((TaskFunction_t)calibrate_task,//校准
+//                (const char *)"CaliTask",
+//                (uint16_t)CALIBRATE_STK_SIZE,
+//                (void *)NULL,
+//                (UBaseType_t)CALIBRATE_TASK_PRIO,
+//                (TaskHandle_t *)&CalibrateTask_Handler);
 
 //    xTaskCreate((TaskFunction_t)DetectTask,//掉线判断任务
 //                (const char *)"DetectTask",

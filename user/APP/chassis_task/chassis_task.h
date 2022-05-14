@@ -57,9 +57,9 @@
 #define MAX_CHASSIS_SPEED_X 3.0f
 //底盘运动过程最大平移速度
 #define MAX_CHASSIS_SPEED_Y 2.9f
-//底盘长宽
-#define ROBOT_LENGTH_A 0.5f
-#define ROBOT_LENGTH_B 0.4f
+////底盘长宽
+//#define ROBOT_LENGTH_A 0.5f
+//#define ROBOT_LENGTH_B 0.4f
 
 #define MOTOR_DISTANCE_TO_CENTER 0.3f	//0.2f
 //底盘3508最大can发送电流值

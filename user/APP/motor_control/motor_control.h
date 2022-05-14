@@ -30,6 +30,8 @@
 
 //遥控器输入死区，因为遥控器存在差异，摇杆在中间，其值不一定为零
 #define RC_DEADLINE	10
+//鼠标输入死区
+#define MOUSE_DEADLINE 10
 //电机编码值转化成角度值    2Π/8191
 #define Ecd_to_Rad		0.00076708403213033652507939040001941f
 #define CIRCLE	(2*PI)	//一圈等于2PI

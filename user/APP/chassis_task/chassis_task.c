@@ -331,9 +331,9 @@ static void chassis_rc_process(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 {
 	int16_t rc_vx_channel = 0, rc_vy_channel = 0, rc_wz_channel = 0;
 	//遥控死区处理
-	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL], &rc_vx_channel, RC_DEADLINE);
-	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL], &rc_vy_channel, RC_DEADLINE);
-	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL], &rc_wz_channel, RC_DEADLINE);
+//	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL], &rc_vx_channel, RC_DEADLINE);
+//	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL], &rc_vy_channel, RC_DEADLINE);
+//	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL], &rc_wz_channel, RC_DEADLINE);
 	*vx_ch = rc_vx_channel * RC_CHASSIS_VX_SEN;
 	*vy_ch = rc_vy_channel * RC_CHASSIS_VY_SEN;
 	//一阶低通滤波作为斜坡函数输入

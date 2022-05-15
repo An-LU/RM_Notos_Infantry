@@ -32,11 +32,30 @@ compiling start_task.c...
   static TaskHandle_t UserTask_Handler;
 ..\user\APP\start_task\start_task.c(53): warning:  #177-D: variable "CalibrateTask_Handler"  was declared but never referenced
   static TaskHandle_t CalibrateTask_Handler;
-..\user\APP\start_task\start_task.c(57): warning:  #177-D: variable "DetectTask_Handler"  was declared but never referenced
-  static TaskHandle_t DetectTask_Handler;
-..\user\APP\start_task\start_task.c: 3 warnings, 0 errors
-compiling gimbal_task.c...
+..\user\APP\start_task\start_task.c: 2 warnings, 0 errors
+compiling miniPC.c...
+..\user\APP\miniPC\miniPC.c(130): warning:  #177-D: variable "a"  was declared but never referenced
+  	uint8_t a = sizeof(stm32_info);
+..\user\APP\miniPC\miniPC.c: 1 warning, 0 errors
+compiling calibrate_task.c...
+..\user\APP\calibrate_task\calibrate_task.c(358): warning:  #177-D: variable "local_cali_t"  was declared but never referenced
+      gimbal_cali_t *local_cali_t = (gimbal_cali_t *)cali;
+..\user\APP\calibrate_task\calibrate_task.c: 1 warning, 0 errors
 compiling chassis_task.c...
+compiling gimbal_task.c...
+..\user\APP\gimbal_task\gimbal_task.c(34): warning:  #177-D: variable "yaw_ecd_speed_mouse_pid"  was declared but never referenced
+  static PidTypeDef yaw_ecd_speed_mouse_pid = { PID_POSITION, YAW_ECD_SPEED_MOUSE_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(35): warning:  #177-D: variable "yaw_ecd_angle_mouse_pid"  was declared but never referenced
+  static PidTypeDef yaw_ecd_angle_mouse_pid = { PID_POSITION, YAW_ECD_ANGLE_MOUSE_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(36): warning:  #177-D: variable "yaw_gyro_speed_mouse_pid"  was declared but never referenced
+  static PidTypeDef yaw_gyro_speed_mouse_pid = { PID_POSITION, YAW_GYRO_SPEED_MOUSE_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(37): warning:  #177-D: variable "yaw_gyro_angle_mouse_pid"  was declared but never referenced
+  static PidTypeDef yaw_gyro_angle_mouse_pid = { PID_POSITION, YAW_GYRO_ANGLE_MOUSE_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(39): warning:  #177-D: variable "pitch_ecd_speed_mouse_pid"  was declared but never referenced
+  static PidTypeDef pitch_ecd_speed_mouse_pid = { PID_POSITION, PITCH_ECD_SPEED_MOUSE_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(40): warning:  #177-D: variable "pitch_ecd_angle_mouse_pid"  was declared but never referenced
+  static PidTypeDef pitch_ecd_angle_mouse_pid = { PID_POSITION, PITCH_ECD_ANGLE_MOUSE_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c: 6 warnings, 0 errors
 compiling user_task.c...
 ..\user\APP\user_task\user_task.c(73): warning:  #1035-D: single-precision operand implicitly converted to double-precision
   		moto_speed = moto->chassis_vx*moto->chassis_vx*12.31;
@@ -45,10 +64,11 @@ compiling user_task.c...
 ..\user\APP\user_task\user_task.c(58): warning:  #550-D: variable "moto_accel"  was set but never used
   	float moto_speed,moto_accel;
 ..\user\APP\user_task\user_task.c: 3 warnings, 0 errors
+compiling shoot.c...
 linking...
-Program Size: Code=39240 RO-data=3444 RW-data=1664 ZI-data=135008  
+Program Size: Code=40864 RO-data=3492 RW-data=2112 ZI-data=135008  
 FromELF: creating hex file...
-".\Objects\infantry.axf" - 0 Error(s), 6 Warning(s).
+".\Objects\infantry.axf" - 0 Error(s), 13 Warning(s).
 
 <h2>Software Packages used:</h2>
 

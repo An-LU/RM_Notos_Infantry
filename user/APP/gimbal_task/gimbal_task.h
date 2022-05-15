@@ -16,7 +16,7 @@
 #define GIMBAL_CONTROL_TIME_MS 1
 
 /******电机相关机械角度 更换电机时需要debug修改！！！******************/
-#define YAW_ECD_DEL		7520//655			//云台回中时电机的机械角度
+#define YAW_ECD_DEL		6136//655			//云台回中时电机的机械角度
 #define PITCH_ECD_MAX	5966//3811
 #define PITCH_ECD_MIN	4830//2036
 #define PITCH_ECD_DEL	5412//2696

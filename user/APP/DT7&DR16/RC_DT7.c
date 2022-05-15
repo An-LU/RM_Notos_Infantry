@@ -194,7 +194,7 @@ static void SBUS_TO_RC(volatile const uint8_t *sbus_buf, RC_ctrl_s *rc_ctrl)//遥
     {
         return;
     }
-
+	//数据位操作整合
     rc_ctrl->rc.ch[0] = (sbus_buf[0] | (sbus_buf[1] << 8)) & 0x07ff;        //Channel 0
     rc_ctrl->rc.ch[1] = ((sbus_buf[1] >> 3) | (sbus_buf[2] << 5)) & 0x07ff; //Channel 1
     rc_ctrl->rc.ch[2] = ((sbus_buf[2] >> 6) | (sbus_buf[3] << 2) |          //Channel 2
@@ -209,13 +209,23 @@ static void SBUS_TO_RC(volatile const uint8_t *sbus_buf, RC_ctrl_s *rc_ctrl)//遥
     rc_ctrl->mouse.press_r = sbus_buf[13];                                  //Mouse Right Is Press ?
     rc_ctrl->key.key_code = sbus_buf[14] | (sbus_buf[15] << 8);				//KeyBoard value
     rc_ctrl->rc.ch[4] = sbus_buf[16] | (sbus_buf[17] << 8);                 //Channel 波轮
-
+	//数据规整
     rc_ctrl->rc.ch[0] -= RC_CH_VALUE_OFFSET;
     rc_ctrl->rc.ch[1] -= RC_CH_VALUE_OFFSET;
     rc_ctrl->rc.ch[2] -= RC_CH_VALUE_OFFSET;
     rc_ctrl->rc.ch[3] -= RC_CH_VALUE_OFFSET;
     rc_ctrl->rc.ch[4] -= RC_CH_VALUE_OFFSET;
-	
+	//死区处理
+	if(rc_ctrl->rc.ch[0] <= RC_DEL && rc_ctrl->rc.ch[0] >= -RC_DEL)
+		rc_ctrl->rc.ch[0] = 0;
+	if(rc_ctrl->rc.ch[1] <= RC_DEL && rc_ctrl->rc.ch[1] >= -RC_DEL)
+		rc_ctrl->rc.ch[1] = 0;
+	if(rc_ctrl->rc.ch[2] <= RC_DEL && rc_ctrl->rc.ch[2] >= -RC_DEL)
+		rc_ctrl->rc.ch[2] = 0;
+	if(rc_ctrl->rc.ch[3] <= RC_DEL && rc_ctrl->rc.ch[3] >= -RC_DEL)
+		rc_ctrl->rc.ch[3] = 0;
+	if(rc_ctrl->rc.ch[4] <= RC_DEL && rc_ctrl->rc.ch[4] >= -RC_DEL)
+		rc_ctrl->rc.ch[4] = 0;
 	//键盘数据处理
 	key_dealwith(rc_ctrl);
 }

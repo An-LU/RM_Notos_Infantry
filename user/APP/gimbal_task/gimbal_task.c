@@ -278,7 +278,7 @@ static void Gimbal_Control(void)
 	//处理自瞄数据
 	gimbal_auto_process(&auto_yaw_ch, &auto_pitch_ch);
 	//开启自瞄并识别到目标
-	//vision_flag = 
+	vision_flag = Vision_update_flag();
 	if(gimbal_info.gimbal_behavior == GIMBAL_AUTO || vision_flag)
 	{
 		add_yaw_angle = auto_yaw_ch;
@@ -501,7 +501,7 @@ static void gimbal_mode_change_save(Gimbal_Mode_e last, Gimbal_Mode_e now)
 		gimbal_info.yaw_motor.absolute_angle = gimbal_info.yaw_motor.absolute_angle_set = gimbal_info.yaw_motor.gyro_now;
 	}
 }
-//pitch轴软件限位
+//pitch轴限位
 static void gimbal_pitch_limit(fp32 *pitch_angle)
 {
 	//如果已回中
@@ -520,12 +520,12 @@ static void gimbal_rc_process(fp32 *yaw_add, fp32 *pitch_add)
 	fp32 mouse_x_channel = 0.0f;
 	fp32 mouse_y_channel = 0.0f;
 	//遥控器死区处理
-	i_dead_zone_del(gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL], &yaw_channel, RC_DEADLINE);
-	i_dead_zone_del(gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL], &pitch_channel, RC_DEADLINE);
+//	i_dead_zone_del(gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL], &yaw_channel, RC_DEADLINE);
+//	i_dead_zone_del(gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL], &pitch_channel, RC_DEADLINE);
 	//鼠标数据处理 鼠标数据是线速度还是其他?
 	//死区处理
-	i_dead_zone_del(gimbal_info.gimbal_RC->mouse.x, &mouse_x_ch, MOUSE_DEADLINE);
-	i_dead_zone_del(gimbal_info.gimbal_RC->mouse.y, &mouse_y_ch, MOUSE_DEADLINE);
+//	i_dead_zone_del(gimbal_info.gimbal_RC->mouse.x, &mouse_x_ch, MOUSE_DEADLINE);
+//	i_dead_zone_del(gimbal_info.gimbal_RC->mouse.y, &mouse_y_ch, MOUSE_DEADLINE);
 	mouse_x_channel = mouse_x_ch * YAW_MOUSE_SEN;
 	mouse_y_channel = mouse_y_ch * PITCH_MOUSE_SEN;
 	//遥控数据比例转换

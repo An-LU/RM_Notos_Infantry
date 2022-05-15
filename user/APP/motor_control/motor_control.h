@@ -45,14 +45,14 @@ typedef enum
 
 
 //内联函数代替宏
-//去除死区
-inline static void i_dead_zone_del(const int16_t input, int16_t *output, int8_t deal)
-{
-	if (input > deal || input < -deal)
-		*output = input;
-	else
-		*output = 0;	
-}
+//去除死区 在遥控接收处理 不在控制任务内处理
+//inline static void i_dead_zone_del(const int16_t input, int16_t *output, int8_t deal)
+//{
+//	if (input > deal || input < -deal)
+//		*output = input;
+//	else
+//		*output = 0;	
+//}
 //电机反馈机械角度规整 0~8191--> -2PI~2PI (rad)
 fp32 ecd_angle_format(uint16_t ecd, uint16_t last_ecd, const uint16_t offset_ecd, uint8_t *turn_table_flag);
 //陀螺仪角度规整 -PI~PI--> -2PI~2PI (rad)

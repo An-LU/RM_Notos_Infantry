@@ -132,6 +132,7 @@ static void Chassis_Mode_Set(void)
 		if(switch_is_up(chassis_info.chassis_RC->rc.s[CHASSIS_MODE_SW]))
 		{
 			mode = CHASSIS_GYRO;		//底盘陀螺仪模式
+			//mode = CHASSIS_FOLLOW_GIMBAL;
 		}
 		else if (switch_is_mid(chassis_info.chassis_RC->rc.s[CHASSIS_MODE_SW]))	//中间
 		{
@@ -308,11 +309,14 @@ static void Chassis_Raw_Mode(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 //底盘跟随云台模式 旋转角度由云台决定 前进方向由云台决定(*)
 static void Chassis_Follow_Gimbal_Mode(fp32 *vx_ch, fp32 *vy_ch)
 {
-	const Gimbal_Motor_s *gimbal_yaw = get_gimbal_yaw_motor_point();	
-	//
+	const Gimbal_Motor_s *gimbal_yaw = get_gimbal_yaw_motor_point();
+	//fp32 vw_follow_ch = chassis_info.chassis_RC->rc.ch[GIMBAL_YAW_CHANNEL] * YAW_RC_SEN;//与云台yaw使用同个通道 跟随云台
+	//输入量设定 旋转角度叠加
+	//chassis_info.chassis_yaw_set += vw_follow_ch;
 	chassis_info.chassis_vx_set = fp32_constrain(*vx_ch, -MAX_CHASSIS_SPEED_X, MAX_CHASSIS_SPEED_X);
 	chassis_info.chassis_vy_set = fp32_constrain(*vy_ch, -MAX_CHASSIS_SPEED_Y, MAX_CHASSIS_SPEED_Y);
-	chassis_info.chassis_vw_set = PID_Calc(&chassis_info.chassis_angle_pid, gimbal_yaw->absolute_angle_last, gimbal_yaw->absolute_angle);
+	chassis_info.chassis_vw_set = PID_Calc(&chassis_info.chassis_angle_pid, chassis_info.chassis_yaw, gimbal_yaw->absolute_angle);
+	//chassis_info.chassis_vw_set = PID_Calc(&chassis_info.chassis_angle_pid, chassis_info.chassis_yaw, chassis_info.chassis_yaw_set);
 }
 //底盘校准模式
 static void Chassis_Cali_Mode(void)
@@ -334,6 +338,9 @@ static void chassis_rc_process(fp32 *vx_ch, fp32 *vy_ch, int16_t *vw_ch)
 //	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL], &rc_vx_channel, RC_DEADLINE);
 //	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL], &rc_vy_channel, RC_DEADLINE);
 //	i_dead_zone_del(chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL], &rc_wz_channel, RC_DEADLINE);
+	rc_vx_channel = chassis_info.chassis_RC->rc.ch[CHASSIS_X_CHANNEL];
+	rc_vy_channel = chassis_info.chassis_RC->rc.ch[CHASSIS_Y_CHANNEL];
+	rc_wz_channel = chassis_info.chassis_RC->rc.ch[CHASSIS_WZ_CHANNEL];
 	*vx_ch = rc_vx_channel * RC_CHASSIS_VX_SEN;
 	*vy_ch = rc_vy_channel * RC_CHASSIS_VY_SEN;
 	//一阶低通滤波作为斜坡函数输入

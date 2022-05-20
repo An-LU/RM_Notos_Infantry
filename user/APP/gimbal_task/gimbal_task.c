@@ -85,6 +85,8 @@ void GIMBAL_task(void *pvParameters)
 
     while (1)
     {
+		//miniPC需要的数据
+		//Data_Send_to_Vision();
 		//模式 遥控 自动 无力
 		Gimbal_mode_set();
 		//云台数据更新
@@ -180,7 +182,15 @@ static void Gimbal_mode_set(void)
 		{
 			mode = GIMBAL_RELAX;//云台无力
 		}
-		gimbal_info.gimbal_behavior = GIMBAL_NORMAL;
+		//gimbal_info.gimbal_behavior = GIMBAL_NORMAL;
+		if(switch_is_mid(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))	//调试
+		{
+			behavior = GIMBAL_NORMAL;
+		}
+		if(switch_is_down(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))		//调试
+		{
+			behavior = GIMBAL_AUTO;
+		}
 	}
 	else		//键鼠控制
 	{
@@ -188,9 +198,13 @@ static void Gimbal_mode_set(void)
 		if(gimbal_info.gimbal_RC->key_data.key_short_press.bit.E)
 			mode = GIMBAL_ENCONDE;
 		
-		//云台行为设置 点击切换
+		//键盘点击事件 云台行为设置 点击切换
 		if(gimbal_info.gimbal_RC->key_data.key_click.bit.Q)	//Q开启小陀螺chassis_info.chassis_RC->key.bit.Q
 			behavior = GIMBAL_NORMAL_GR;	//小陀螺
+		if(gimbal_info.gimbal_RC->key_data.key_click.bit.V)	//开启自瞄
+			behavior = GIMBAL_AUTO;
+		if(gimbal_info.gimbal_RC->key_data.key_click.bit.CTRL && gimbal_info.gimbal_RC->key_data.key_click.bit.V)//切换自瞄模式
+			gimbal_info.vision_mode = ~gimbal_info.vision_mode;
 	}
 	gimbal_info.gimbal_mode = mode;
 	gimbal_info.gimbal_behavior = behavior;
@@ -275,12 +289,12 @@ static void Gimbal_Control(void)
 	uint8_t vision_flag = 0;
 	//处理遥控及鼠标数据
 	gimbal_rc_process(&rc_yaw_ch, &rc_pitch_ch);
-	//处理自瞄数据
-	gimbal_auto_process(&auto_yaw_ch, &auto_pitch_ch);
 	//开启自瞄并识别到目标
 	vision_flag = Vision_update_flag();
-	if(gimbal_info.gimbal_behavior == GIMBAL_AUTO || vision_flag)
+	if(gimbal_info.gimbal_behavior == GIMBAL_AUTO && Vision_update_flag())
 	{
+		//处理自瞄数据
+		gimbal_auto_process(&auto_yaw_ch, &auto_pitch_ch);
 		add_yaw_angle = auto_yaw_ch;
 		add_pitch_angle = auto_pitch_ch;
 	}
@@ -306,13 +320,13 @@ static void Gimbal_Control(void)
 		{
 			Gimbal_Gyro_mode(&add_pitch_angle, &add_yaw_angle, vision_flag);
 			//gimbal_pitch_limit(&gimbal_info.pitch_motor.absolute_angle_set);	//pitch轴限位
-			gimbal_pitch_limit(&gimbal_info.pitch_motor.relative_angle_set);
+			//gimbal_pitch_limit(&gimbal_info.pitch_motor.relative_angle_set);
 			break;
 		}
 		case GIMBAL_ENCONDE:	//机械控制模式
 		{
 			Gimbal_Enconde_mode(&add_pitch_angle, &add_yaw_angle, vision_flag);
-			gimbal_pitch_limit(&gimbal_info.pitch_motor.relative_angle_set);	//pitch轴限位
+			//gimbal_pitch_limit(&gimbal_info.pitch_motor.relative_angle_set);	//pitch轴限位
 			break;
 		}
 	}
@@ -526,6 +540,10 @@ static void gimbal_rc_process(fp32 *yaw_add, fp32 *pitch_add)
 	//死区处理
 //	i_dead_zone_del(gimbal_info.gimbal_RC->mouse.x, &mouse_x_ch, MOUSE_DEADLINE);
 //	i_dead_zone_del(gimbal_info.gimbal_RC->mouse.y, &mouse_y_ch, MOUSE_DEADLINE);
+	mouse_x_ch = gimbal_info.gimbal_RC->mouse.x;
+	mouse_y_ch = gimbal_info.gimbal_RC->mouse.y;
+	yaw_channel = gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL];
+	pitch_channel = gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL];
 	mouse_x_channel = mouse_x_ch * YAW_MOUSE_SEN;
 	mouse_y_channel = mouse_y_ch * PITCH_MOUSE_SEN;
 	//遥控数据比例转换
@@ -542,6 +560,7 @@ static void gimbal_auto_process(fp32 *yaw_add, fp32 *pitch_add)
 	auto_pitch_channel = gimbal_info.gimbal_AUTO_ctrl->pitch_angle * PITCH_AUTO_SEN;
 	*yaw_add = auto_yaw_channel;
 	*pitch_add = auto_pitch_channel;
+	Vision_clean_flag();
 }
 //发送控制电压
 static void Gimbal_Send_Voltage(void)
@@ -573,6 +592,10 @@ const Gimbal_Motor_s *get_gimbal_yaw_motor_point(void)
 const Gimbal_Motor_s *get_gimbal_pitch_motor_point(void)
 {
     return &gimbal_info.pitch_motor;
+}
+Vision_Mode_e get_vision_mode(void)
+{
+    return gimbal_info.vision_mode;
 }
 fp32 get_gimbal_relative_angle(void)
 {

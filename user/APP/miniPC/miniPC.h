@@ -111,8 +111,8 @@ typedef __packed struct
 //}Stm32_Info_t_2;
 typedef enum
 {
-	ARMOR_PLATE,	//装甲板
-	BUFF_ANTI,		//打符
+	ARMOR_PLATE = 0,	//装甲板
+	BUFF_ANTI = 1,		//打符
 	NO_VISION
 }Vision_Mode_e;
 //-----------------------------------【步兵信息结构体】--------------------------------------------

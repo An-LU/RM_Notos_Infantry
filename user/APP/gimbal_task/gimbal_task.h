@@ -18,7 +18,7 @@
 /******电机相关机械角度 更换电机时需要debug修改！！！******************/
 #define YAW_ECD_DEL		6136//655			//云台回中时电机的机械角度
 #define PITCH_ECD_MAX	5966//3811
-#define PITCH_ECD_MIN	4830//2036
+#define PITCH_ECD_MIN	4565//2036
 #define PITCH_ECD_DEL	5412//2696
 /*******************相关机械角度_END**********************************/
 
@@ -56,7 +56,7 @@
 //yaw   遥控 陀螺仪模式 速度环(内环)
 #define YAW_GYRO_SPEED_RC_PID_Init	1000.0f, 0.0f, 0.5f, MAX_GM6020_CAN_VOLTAGE, 5000.0f
 //yaw   遥控 陀螺仪模式 角度环(外环)
-#define YAW_GYRO_ANGLE_RC_PID_Init	100.0f, 0.0f, 0.0f, 10.0f, 0.0f
+#define YAW_GYRO_ANGLE_RC_PID_Init	110.0f, 0.0f, 0.0f, 10.0f, 0.0f
 //pitch 遥控 机械模式 速度环(内环)
 #define PITCH_ECD_SPEED_RC_PID_Init	1000.0f, 0.0f, 2.0f, MAX_GM6020_CAN_VOLTAGE, 5000.0f
 //pitch 遥控 机械模式 角度环(外环)
@@ -162,6 +162,7 @@ typedef struct
 	Control_Mode_e ctrl_mode;				//控制模式
 	Gimbal_Mode_e gimbal_mode;				//云台模式
 	Gimbal_Behavior_e gimbal_behavior;		//云台行为
+	Vision_Mode_e vision_mode;				//自瞄模式
 	Gimbal_Mode_e gimbal_mode_last;			//云台上一次模式
 	Gimbal_Behavior_e gimbal_behavior_last;		//云台行为
 	
@@ -175,6 +176,7 @@ typedef struct
 
 extern const Gimbal_Motor_s *get_gimbal_yaw_motor_point(void);
 extern const Gimbal_Motor_s *get_gimbal_pitch_motor_point(void);
+extern Vision_Mode_e get_vision_mode(void);
 extern fp32 get_gimbal_relative_angle(void);
 extern void GIMBAL_task(void *pvParameters);
 

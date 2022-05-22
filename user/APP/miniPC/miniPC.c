@@ -93,6 +93,8 @@ void Vision_Init(void)
 //更新发送云台数据到miniPC
 void Update_Data(void)
 {
+	fp32 yaw_offset = get_gimbal_yaw_offset_angle();
+	fp32 pitch_offset = get_gimbal_pitch_offset_angle();
 #if ROBOT_MODE == JUDGE_SYSTEM_OFFLINE
 	//没有安装裁判系统
 	stm32_info.enemy_color = ROBOT_TYPE;
@@ -105,9 +107,10 @@ void Update_Data(void)
 	stm32_info.mode = BUFF_ANTI;//ARMOR_PLATE;get_vision_mode_point();
 	stm32_info.is_left = 0;
 	stm32_info.run_left = 0;
-	stm32_info.pitch = ins_angle[INS_PITCH_ADDRESS_OFFSET];//*(ins_angle + INS_PITCH_ADDRESS_OFFSET);//pitch_motor->relative_angle;
-	stm32_info.yaw = ins_angle[INS_YAW_ADDRESS_OFFSET];//yaw_motor->relative_angle;
+	stm32_info.pitch = ins_angle[INS_PITCH_ADDRESS_OFFSET] - pitch_offset;//*(ins_angle + INS_PITCH_ADDRESS_OFFSET);//pitch_motor->relative_angle;
+	stm32_info.yaw = ins_angle[INS_YAW_ADDRESS_OFFSET] - yaw_offset;//yaw_motor->relative_angle;
 }
+
 void PackData(uint16_t cmd_id, uint8_t *p_data ,uint16_t len, uint8_t *tx_buf)
 {
 	uint16_t frame_length = VISION_LENGTH_SOF + VISION_LENGTH_CMD + len + VISION_LENGTH_TAIL;

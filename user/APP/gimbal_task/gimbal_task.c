@@ -52,6 +52,11 @@ static PidTypeDef yaw_gyromode_speed_rc_pid = { PID_POSITION, YAW_gyromode_SPEED
 static PidTypeDef yaw_gyromode_angle_rc_pid = { PID_POSITION, YAW_gyromode_ANGLE_RC_PID_Init };
 static PidTypeDef yaw_gyromode_speed_auto_pid = { PID_POSITION, YAW_gyromode_SPEED_AUTO_PID_Init };
 static PidTypeDef yaw_gyromode_angle_auto_pid = { PID_POSITION, YAW_gyromode_ANGLE_AUTO_PID_Init };
+//
+static PidTypeDef yaw_buff_anti_speed_pid = { PID_POSITION, YAW_buff_anti_SPEED_PID_Init };
+static PidTypeDef yaw_buff_anti_angle_pid = { PID_POSITION, YAW_buff_anti_ANGLE_PID_Init };
+static PidTypeDef pitch_buff_anti_speed_pid = { PID_POSITION, PITCH_buff_anti_SPEED_PID_Init };
+static PidTypeDef pitch_buff_anti_angle_pid = { PID_POSITION, PITCH_buff_anti_ANGLE_PID_Init };
 /**************************PID**********************************/
 static void Gimbal_Init(void);
 static void Gimbal_mode_set(void);
@@ -67,6 +72,7 @@ static void Gimbal_Gyro_mode(fp32 *, fp32 *, uint8_t);
 static void gimbal_mode_change_save(Gimbal_Mode_e, Gimbal_Mode_e);
 static void gimbal_rc_process(fp32 *, fp32 *);
 static void gimbal_auto_process(fp32 *, fp32 *);
+static void gimbal_buff_anti_process(fp32 *, fp32 *, uint8_t move_status);
 static void gimbal_pitch_limit(fp32 *);
 void GIMBAL_task(void *pvParameters)
 {
@@ -86,7 +92,7 @@ void GIMBAL_task(void *pvParameters)
     while (1)
     {
 		//miniPC需要的数据
-		//Data_Send_to_Vision();
+		Data_Send_to_Vision();
 		//模式 遥控 自动 无力
 		Gimbal_mode_set();
 		//云台数据更新
@@ -155,13 +161,14 @@ static void Gimbal_mode_set(void)
 	Gimbal_Behavior_e behavior = GIMBAL_NORMAL;
 
 	//控制方式选择
-	if(switch_is_mid(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))		//遥控控制
+	if(switch_is_up(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))		//键盘控制
 	{
+		//gimbal_info.ctrl_mode = PC_CTRL;
 		gimbal_info.ctrl_mode = RC_CTRL;
 	}
-	else if(switch_is_up(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))		//键盘控制
+	else if(switch_is_mid(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))		//遥控控制
 	{
-		gimbal_info.ctrl_mode = PC_CTRL;
+		gimbal_info.ctrl_mode = RC_CTRL;
 	}
 	else	//遥控模式下开启摩擦轮
 	{
@@ -183,11 +190,16 @@ static void Gimbal_mode_set(void)
 			mode = GIMBAL_RELAX;//云台无力
 		}
 		//gimbal_info.gimbal_behavior = GIMBAL_NORMAL;
-		if(switch_is_mid(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))	//调试
+		
+		if(switch_is_up(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))//调试
+		{
+			behavior = GIMBAL_BUFF_ANTI;
+		}
+		else if(switch_is_mid(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))	//调试
 		{
 			behavior = GIMBAL_NORMAL;
 		}
-		if(switch_is_down(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))		//调试
+		else if(switch_is_down(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))		//调试
 		{
 			behavior = GIMBAL_AUTO;
 		}
@@ -298,11 +310,17 @@ static void Gimbal_Control(void)
 		add_yaw_angle = auto_yaw_ch;
 		add_pitch_angle = auto_pitch_ch;
 	}
+	else if(gimbal_info.gimbal_behavior == GIMBAL_BUFF_ANTI)		
+	{
+		//处理打符数据
+		gimbal_buff_anti_process(&add_yaw_angle, &add_pitch_angle, gimbal_info.gimbal_AUTO_ctrl->visual_valid);
+	}
 	else
 	{
 		add_yaw_angle = rc_yaw_ch;
 		add_pitch_angle = rc_pitch_ch;
 	}
+
 	//选择控制量输入 角度叠加量
 	switch(gimbal_info.gimbal_mode)
 	{
@@ -349,6 +367,8 @@ static void Gimbal_Control(void)
 		else	//已回中
 		{
 			gimbal_info.turn_mid_flag = 1;
+			gimbal_info.pitch_motor.offset_angle = gimbal_info.pitch_motor.gyro_now;
+			gimbal_info.yaw_motor.offset_angle = gimbal_info.yaw_motor.gyro_now;
 		}
 		//角度叠加
 		gimbal_info.pitch_motor.relative_angle_set += add_pitch_angle;
@@ -433,12 +453,22 @@ static void Gimbal_Enconde_mode(fp32 *pitch_add, fp32 *yaw_add, uint8_t vision_f
 				gimbal_info.gimbal_behavior = GIMBAL_NORMAL;
 			}
 			break;
+		case GIMBAL_BUFF_ANTI:
+			if(gimbal_info.pitch_motor.relative_angle_set > 0.5f)
+				gimbal_info.pitch_motor.relative_angle_set = 0.5f;
+			else if(gimbal_info.yaw_motor.relative_angle_set < -0.5f)
+				gimbal_info.yaw_motor.relative_angle_set = -0.5f;	
+			gimbal_info.pitch_motor.speed_set = PID_Calc(&pitch_buff_anti_angle_pid, gimbal_info.pitch_motor.relative_angle, gimbal_info.pitch_motor.relative_angle_set);
+			gimbal_info.pitch_motor.voltage_set = PID_Calc(&pitch_buff_anti_speed_pid, gimbal_info.pitch_motor.speed, gimbal_info.pitch_motor.speed_set);
+			gimbal_info.yaw_motor.speed_set = PID_Calc(&yaw_buff_anti_angle_pid, gimbal_info.yaw_motor.relative_angle, gimbal_info.yaw_motor.relative_angle_set);
+			gimbal_info.yaw_motor.voltage_set = PID_Calc(&yaw_buff_anti_speed_pid, gimbal_info.yaw_motor.speed, gimbal_info.yaw_motor.speed_set);
+			break;
 		case GIMBAL_TURN:
 			
 			break;
 		case GIMBAL_STOP:
-			gimbal_info.pitch_motor.relative_angle_set += 0;
-			gimbal_info.yaw_motor.relative_angle_set += 0;
+//			gimbal_info.pitch_motor.relative_angle_set += 0;
+//			gimbal_info.yaw_motor.relative_angle_set += 0;
 			break;
 		//该行为只在陀螺仪模式下生效
 		case GIMBAL_NORMAL_GR:
@@ -495,6 +525,7 @@ static void Gimbal_Gyro_mode(fp32 *pitch_add, fp32 *yaw_add, uint8_t vision_flag
 			break;
 		case GIMBAL_TURN:
 		case GIMBAL_CENTER:
+		case GIMBAL_BUFF_ANTI:
 			//在此模式下为底盘回中 在此模式下该行为不执行
 			gimbal_info.gimbal_behavior = gimbal_info.gimbal_behavior_last;
 			break;
@@ -524,6 +555,33 @@ static void gimbal_pitch_limit(fp32 *pitch_angle)
 		*pitch_angle = *pitch_angle > PITCH_ECD_MAX ? PITCH_ECD_MAX : *pitch_angle;
 		*pitch_angle = *pitch_angle < PITCH_ECD_MIN ? PITCH_ECD_MIN : *pitch_angle;
 	}
+}
+//打符数据处理
+static void gimbal_buff_anti_process(fp32 *yaw_add, fp32 *pitch_add, uint8_t move_status)
+{
+	static uint8_t move_flag;
+	if(move_status == stop)
+	{
+		move_flag = 0;
+		*yaw_add = 0.0f;
+		*pitch_add = 0.0f;
+		
+	}
+	else if(move_status == shift && !move_flag)
+	{
+		if(!move_flag)
+		{
+			move_flag = 1;
+			*yaw_add = gimbal_info.gimbal_AUTO_ctrl->yaw_angle;
+			*pitch_add = gimbal_info.gimbal_AUTO_ctrl->pitch_angle;
+		}
+		else
+		{
+			*yaw_add = 0.0f;
+			*pitch_add = 0.0f;
+		}
+	}
+	
 }
 //遥控器数据处理
 static void gimbal_rc_process(fp32 *yaw_add, fp32 *pitch_add)
@@ -601,5 +659,12 @@ fp32 get_gimbal_relative_angle(void)
 {
 	return gimbal_info.yaw_motor.ecd_now;
 }
-
+fp32 get_gimbal_pitch_offset_angle(void)
+{
+	return gimbal_info.pitch_motor.offset_angle;
+}
+fp32 get_gimbal_yaw_offset_angle(void)
+{
+	return gimbal_info.yaw_motor.offset_angle;
+}
 

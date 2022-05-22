@@ -27,7 +27,28 @@ Project File Date:  04/17/2022
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil v5\ARM\ARMCC\Bin'
 Build target 'standard'
-".\Objects\infantry.axf" - 0 Error(s), 0 Warning(s).
+compiling gimbal_task.c...
+..\user\APP\gimbal_task\gimbal_task.c(219): warning:  #188-D: enumerated type mixed with another type
+  			gimbal_info.vision_mode = ~gimbal_info.vision_mode;
+..\user\APP\gimbal_task\gimbal_task.c(34): warning:  #177-D: variable "yaw_ecd_speed_mouse_pid"  was declared but never referenced
+  static PidTypeDef yaw_ecd_speed_mouse_pid = { PID_POSITION, YAW_ECD_SPEED_MOUSE_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(35): warning:  #177-D: variable "yaw_ecd_angle_mouse_pid"  was declared but never referenced
+  static PidTypeDef yaw_ecd_angle_mouse_pid = { PID_POSITION, YAW_ECD_ANGLE_MOUSE_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(36): warning:  #177-D: variable "yaw_gyro_speed_mouse_pid"  was declared but never referenced
+  static PidTypeDef yaw_gyro_speed_mouse_pid = { PID_POSITION, YAW_GYRO_SPEED_MOUSE_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(37): warning:  #177-D: variable "yaw_gyro_angle_mouse_pid"  was declared but never referenced
+  static PidTypeDef yaw_gyro_angle_mouse_pid = { PID_POSITION, YAW_GYRO_ANGLE_MOUSE_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(39): warning:  #177-D: variable "pitch_ecd_speed_mouse_pid"  was declared but never referenced
+  static PidTypeDef pitch_ecd_speed_mouse_pid = { PID_POSITION, PITCH_ECD_SPEED_MOUSE_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(40): warning:  #177-D: variable "pitch_ecd_angle_mouse_pid"  was declared but never referenced
+  static PidTypeDef pitch_ecd_angle_mouse_pid = { PID_POSITION, PITCH_ECD_ANGLE_MOUSE_PID_Init };
+..\user\APP\gimbal_task\gimbal_task.c(550): warning:  #177-D: function "gimbal_pitch_limit"  was declared but never referenced
+  static void gimbal_pitch_limit(fp32 *pitch_angle)
+..\user\APP\gimbal_task\gimbal_task.c: 8 warnings, 0 errors
+linking...
+Program Size: Code=40056 RO-data=3444 RW-data=2388 ZI-data=135028  
+FromELF: creating hex file...
+".\Objects\infantry.axf" - 0 Error(s), 8 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -40,7 +61,7 @@ Package Vendor: Keil
   D:\Keil v5\ARM\PACK\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:05
 </pre>
 </body>
 </html>

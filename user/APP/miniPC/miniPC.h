@@ -54,6 +54,11 @@ typedef __packed struct
 //	float pitch_angle;
 //	float yaw_angle;
 //} CTRL_t;
+typedef enum
+{
+	stop = 0,
+	shift = 1
+}Vision_Valid_e;
 typedef __packed struct
 {
     uint32_t	time;
@@ -85,8 +90,8 @@ typedef __packed struct
     fp32		bullet_spd;		//弹丸速度
     fp32		pitch;			//当前pitch角度
     fp32		yaw;			//当前yaw角度
-    //fp32		pitch_offset;	//pit补偿角度
-    //fp32		yaw_offset;		//yaw补偿角度
+    fp32		pitch_offset;	//pit补偿角度
+    fp32		yaw_offset;		//yaw补偿角度
 }Stm32_Info_t;
 /* stm32-->miniPC  byte: 25 */
 typedef __packed struct

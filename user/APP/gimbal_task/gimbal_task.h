@@ -105,6 +105,13 @@
 //陀螺仪模式 自瞄 角度环(外环)
 #define YAW_gyromode_ANGLE_AUTO_PID_Init	150.0f, 0.0f, 0.0f, 10.0f, 0.0f
 /*****************************以上为小陀螺模式下YAW轴的PID参数*****************************/
+//yaw打符
+#define YAW_buff_anti_SPEED_PID_Init	1500.0f, 0.0f, 0.5f, MAX_GM6020_CAN_VOLTAGE, 5000.0f
+#define YAW_buff_anti_ANGLE_PID_Init	178.0f, 0.0f, 0.0f, 10.0f, 0.0f
+//pitch 
+#define PITCH_buff_anti_SPEED_PID_Init	1000.0f, 0.0f, 2.0f, MAX_GM6020_CAN_VOLTAGE, 5000.0f
+#define PITCH_buff_anti_ANGLE_PID_Init	200.0f, 0.0f, 0.0f, 10.0f, 0.0f
+/*****************************以上为打符模式下的PID参数*****************************/
 /**********************PID_END************************/
 typedef enum
 {
@@ -121,7 +128,8 @@ typedef enum
 	GIMBAL_AUTO_GR,				//底盘小陀螺下云台自瞄
 	GIMBAL_CENTER,				//云台回中
 	GIMBAL_TURN,				//云台掉头
-	GIMBAL_STOP					//云台停止
+	GIMBAL_STOP,				//云台停止
+	GIMBAL_BUFF_ANTI			//打符
 }Gimbal_Behavior_e;
 typedef struct
 {
@@ -136,6 +144,8 @@ typedef struct
 	fp32 absolute_angle;			
 	fp32 absolute_angle_set;
 	fp32 absolute_angle_last;
+	
+	fp32 offset_angle;		//
 	
 	fp32 speed;				//当前角速度rad/s
 	fp32 speed_set;			//设定角速度
@@ -179,6 +189,8 @@ extern const Gimbal_Motor_s *get_gimbal_pitch_motor_point(void);
 extern Vision_Mode_e get_vision_mode(void);
 extern fp32 get_gimbal_relative_angle(void);
 extern void GIMBAL_task(void *pvParameters);
+fp32 get_gimbal_pitch_offset_angle(void);
+fp32 get_gimbal_yaw_offset_angle(void);
 
 #endif
 

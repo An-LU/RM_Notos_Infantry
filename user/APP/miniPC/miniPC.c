@@ -104,7 +104,7 @@ void Update_Data(void)
 	stm32_info.enemy_color = get_Robot_Type_Judge();
 	stm32_info.bullet_spd = get_bullet_speed();
 #endif	/* ROBOT_MODE */
-	stm32_info.mode = BUFF_ANTI;//ARMOR_PLATE;get_vision_mode_point();
+	stm32_info.mode = get_vision_mode();//BUFF_ANTI;//ARMOR_PLATE;
 	stm32_info.is_left = 0;
 	stm32_info.run_left = 0;
 	stm32_info.pitch = ins_angle[INS_PITCH_ADDRESS_OFFSET] - pitch_offset;//*(ins_angle + INS_PITCH_ADDRESS_OFFSET);//pitch_motor->relative_angle;

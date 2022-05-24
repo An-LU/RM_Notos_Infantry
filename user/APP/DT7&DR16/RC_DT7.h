@@ -1,5 +1,5 @@
-#ifndef RC_DT7_H_
-#define RC_DT7_H_
+#ifndef __RC_DT7_H_
+#define __RC_DT7_H_
 
 #include "main.h"
 //操作模式
@@ -45,10 +45,10 @@ typedef union
 }Key_u;
 typedef struct 
 {
+	uint16_t key_press_time[16];	//按键按下时间
 	Key_u key_short_press;		//按键短按
 	Key_u key_long_press;		//按键长按
 	Key_u key_click;			//按键点击
-	uint8_t key_press_time[16];	//按键按下时间
 }Key_Data_s;
 typedef struct
 {
@@ -80,6 +80,6 @@ extern bool RC_data_is_error(void);
 extern void slove_RC_lost(void);
 extern void slove_data_error(void);
 
-#endif	/* RC_DT7_H_ */
+#endif	/* __RC_DT7_H_ */
 
 

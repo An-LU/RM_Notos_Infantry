@@ -71,6 +71,7 @@ static void Gimbal_Gyro_mode(fp32 *, fp32 *, uint8_t);
 	
 static void gimbal_mode_change_save(Gimbal_Mode_e, Gimbal_Mode_e);
 static void gimbal_rc_process(fp32 *, fp32 *);
+static void gimbal_mouse_process(fp32 *, fp32 *);
 static void gimbal_auto_process(fp32 *, fp32 *);
 static void gimbal_buff_anti_process(fp32 *, fp32 *, uint8_t move_status);
 static void gimbal_pitch_limit(fp32 *);
@@ -152,6 +153,8 @@ static void Gimbal_Init()
 	gimbal_info.turn_mid_flag = 0;
 	//获取自瞄数据
 	gimbal_info.gimbal_AUTO_ctrl = get_AUTO_control_point();
+	//自瞄初始化
+	gimbal_info.vision_mode = NO_VISION;
 	Gimbal_Updata();
 }
 //云台模式选择
@@ -194,14 +197,17 @@ static void Gimbal_mode_set(void)
 		if(switch_is_up(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))//调试
 		{
 			behavior = GIMBAL_BUFF_ANTI;
+			gimbal_info.vision_mode = BUFF_ANTI;
 		}
 		else if(switch_is_mid(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))	//调试
 		{
 			behavior = GIMBAL_NORMAL;
+			gimbal_info.vision_mode = NO_VISION;
 		}
 		else if(switch_is_down(gimbal_info.gimbal_RC->rc.s[CONTROL_MODE_SW]))		//调试
 		{
 			behavior = GIMBAL_AUTO;
+			gimbal_info.vision_mode = ARMOR_PLATE;
 		}
 	}
 	else		//键鼠控制
@@ -295,12 +301,16 @@ static void Gimbal_Updata(void)
 //控制量输入
 static void Gimbal_Control(void)
 {
-	fp32 add_yaw_angle = 0.0f;
-	fp32 add_pitch_angle = 0.0f;
-	fp32 rc_yaw_ch, rc_pitch_ch, auto_yaw_ch, auto_pitch_ch;
+	static uint8_t buff_anti_return, flag;
+	fp32 add_yaw_angle = 0.0f, add_pitch_angle = 0.0f;
+	fp32 rc_yaw_ch = 0.0f, rc_pitch_ch = 0.0f;
+	fp32 auto_yaw_ch = 0.0f, auto_pitch_ch = 0.0f;
+	fp32 mouse_yaw_ch = 0.0f, mouse_pitch_ch = 0.0f;
 	uint8_t vision_flag = 0;
-	//处理遥控及鼠标数据
+	//处理遥控数据
 	gimbal_rc_process(&rc_yaw_ch, &rc_pitch_ch);
+	//处理鼠标数据
+	gimbal_mouse_process(&mouse_yaw_ch, &mouse_pitch_ch);
 	//开启自瞄并识别到目标
 	vision_flag = Vision_update_flag();
 	if(gimbal_info.gimbal_behavior == GIMBAL_AUTO && Vision_update_flag())
@@ -312,8 +322,26 @@ static void Gimbal_Control(void)
 	}
 	else if(gimbal_info.gimbal_behavior == GIMBAL_BUFF_ANTI)		
 	{
-		//处理打符数据
-		gimbal_buff_anti_process(&add_yaw_angle, &add_pitch_angle, gimbal_info.gimbal_AUTO_ctrl->visual_valid);
+		if(!buff_anti_return)
+		{
+			if(gimbal_info.gimbal_AUTO_ctrl->visual_valid == shift && !flag)
+			{
+				add_yaw_angle = gimbal_info.gimbal_AUTO_ctrl->yaw_angle;
+				add_pitch_angle = gimbal_info.gimbal_AUTO_ctrl->pitch_angle;
+				flag = 1;
+			}
+			if(gimbal_info.gimbal_AUTO_ctrl->visual_valid == stop)
+			{
+				buff_anti_return = 1;
+				gimbal_info.pitch_motor.offset_angle = gimbal_info.pitch_motor.gyro_now;
+				gimbal_info.yaw_motor.offset_angle = gimbal_info.yaw_motor.gyro_now;
+			}
+		}
+		else
+		{
+			//处理打符数据
+			gimbal_buff_anti_process(&add_yaw_angle, &add_pitch_angle, gimbal_info.gimbal_AUTO_ctrl->visual_valid);
+		}
 	}
 	else
 	{
@@ -331,6 +359,8 @@ static void Gimbal_Control(void)
 		}
 		case GIMBAL_RELAX:		//失能模式
 		{
+			buff_anti_return = 0;
+			flag = 0;
 			Gimbal_Relax_mode();
 			break;
 		}
@@ -367,8 +397,8 @@ static void Gimbal_Control(void)
 		else	//已回中
 		{
 			gimbal_info.turn_mid_flag = 1;
-			gimbal_info.pitch_motor.offset_angle = gimbal_info.pitch_motor.gyro_now;
-			gimbal_info.yaw_motor.offset_angle = gimbal_info.yaw_motor.gyro_now;
+//			gimbal_info.pitch_motor.offset_angle = gimbal_info.pitch_motor.gyro_now;
+//			gimbal_info.yaw_motor.offset_angle = gimbal_info.yaw_motor.gyro_now;
 		}
 		//角度叠加
 		gimbal_info.pitch_motor.relative_angle_set += add_pitch_angle;
@@ -583,30 +613,29 @@ static void gimbal_buff_anti_process(fp32 *yaw_add, fp32 *pitch_add, uint8_t mov
 	}
 	
 }
+//鼠标数据处理
+static void gimbal_mouse_process(fp32 *yaw_add, fp32 *pitch_add)
+{
+	fp32 mouse_x_channel = 0.0f;
+	fp32 mouse_y_channel = 0.0f;
+	mouse_x_channel = gimbal_info.gimbal_RC->mouse.x * YAW_MOUSE_SEN;
+	mouse_y_channel = gimbal_info.gimbal_RC->mouse.y * PITCH_MOUSE_SEN;
+	
+	*yaw_add  = mouse_x_channel;
+	*pitch_add  = mouse_y_channel;
+}
 //遥控器数据处理
 static void gimbal_rc_process(fp32 *yaw_add, fp32 *pitch_add)
 {
 	//初始化相关变量
-	int16_t yaw_channel = 0, mouse_x_ch = 0;
-	int16_t pitch_channel = 0, mouse_y_ch = 0;
-	fp32 mouse_x_channel = 0.0f;
-	fp32 mouse_y_channel = 0.0f;
-	//遥控器死区处理
-//	i_dead_zone_del(gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL], &yaw_channel, RC_DEADLINE);
-//	i_dead_zone_del(gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL], &pitch_channel, RC_DEADLINE);
-	//鼠标数据处理 鼠标数据是线速度还是其他?
-	//死区处理
-//	i_dead_zone_del(gimbal_info.gimbal_RC->mouse.x, &mouse_x_ch, MOUSE_DEADLINE);
-//	i_dead_zone_del(gimbal_info.gimbal_RC->mouse.y, &mouse_y_ch, MOUSE_DEADLINE);
-	mouse_x_ch = gimbal_info.gimbal_RC->mouse.x;
-	mouse_y_ch = gimbal_info.gimbal_RC->mouse.y;
+	int16_t yaw_channel = 0;
+	int16_t pitch_channel = 0;
+
 	yaw_channel = gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL];
 	pitch_channel = gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL];
-	mouse_x_channel = mouse_x_ch * YAW_MOUSE_SEN;
-	mouse_y_channel = mouse_y_ch * PITCH_MOUSE_SEN;
 	//遥控数据比例转换
-	*yaw_add = yaw_channel * YAW_RC_SEN + mouse_x_channel;
-	*pitch_add = pitch_channel * PITCH_RC_SEN + mouse_y_channel;
+	*yaw_add = yaw_channel * YAW_RC_SEN;
+	*pitch_add = pitch_channel * PITCH_RC_SEN;
 }
 //自瞄数据处理
 static void gimbal_auto_process(fp32 *yaw_add, fp32 *pitch_add)

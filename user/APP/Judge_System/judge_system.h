@@ -108,7 +108,7 @@ typedef __packed struct
 /* ID: 0x0002  Byte:  1    比赛结果数据 */
 typedef __packed struct 
 { 
-	uint8_t winner;
+	uint8_t winner;						//0 平局 1 红方胜利 2 蓝方胜利 
 } ext_game_result_t; 
 
 /* ID: 0x0003  Byte:  32    比赛机器人血量数据 */
@@ -150,7 +150,7 @@ typedef __packed struct
 	uint8_t F2_zone_buff_debuff_status:3;   //红方弹药
 	
 	uint8_t F3_zone_status:1;  
-	uint8_t F3_zone_buff_debuff_status:3;		//蓝方回血  
+	uint8_t F3_zone_buff_debuff_status:3;	//蓝方回血  
 	
 	uint8_t F4_zone_status:1;  
 	uint8_t F4_zone_buff_debuff_status:3;  	//蓝方弹药
@@ -161,7 +161,7 @@ typedef __packed struct
 	uint8_t F6_zone_status:1;  
 	uint8_t F6_zone_buff_debuff_status:3;  	//禁止移动区
 	
-	uint16_t red1_bullet_left;							//红蓝方剩余弹量
+	uint16_t red1_bullet_left;				//红蓝方剩余弹量
 	uint16_t red2_bullet_left;
 	uint16_t blue1_bullet_left;
 	uint16_t blue2_bullet_left;
@@ -171,31 +171,31 @@ typedef __packed struct
 /* ID: 0x0101  Byte:  4    场地事件数据 */
 typedef __packed struct 
 { 
-	uint32_t event_type;										//0~4bit在用，5~31保留
+	uint32_t event_type;				//0~4bit在用，5~31保留
 	
 } ext_event_data_t; 
 
 /* ID: 0x0102  Byte:  4    场地补给站动作标识数据 */
 typedef __packed struct 
 { 
-	uint8_t supply_projectile_id;						//补给站口ID
-	uint8_t supply_robot_id;								//当前补弹机器人ID
-	uint8_t supply_projectile_step;					//补给站出弹口状态
+	uint8_t supply_projectile_id;		//补给站口ID
+	uint8_t supply_robot_id;			//当前补弹机器人ID
+	uint8_t supply_projectile_step;		//补给站出弹口状态
 	
-	uint8_t supply_projectile_num;					//补弹数目
+	uint8_t supply_projectile_num;		//补弹数目
 } ext_supply_projectile_action_t; 
 
 /* ID: 0x0104  Byte: 2   裁判系统警告信息 */
 typedef __packed struct 
 { 
-	uint8_t level; 													//警告等级
-	uint8_t foul_robot_id;									//犯规机器人ID
+	uint8_t level; 						//警告等级
+	uint8_t foul_robot_id;				//犯规机器人ID
 }  ext_referee_warning_t;  
 
 /* ID: 0x0105  Byte:1  飞镖发射口倒计时 */
 typedef __packed struct 
 { 
-	uint8_t dart_remaining_time; 						//15s倒计时
+	uint8_t dart_remaining_time; 		//15s倒计时
 }  ext_dart_remaining_time_t;  
 
 
@@ -218,97 +218,96 @@ typedef __packed struct
 //0代表是17mm枪管，1代表42mm枪管
 typedef __packed struct 			
 { 
-	uint8_t robot_id;   								//本机器人ID，可用来校验发送
-	uint8_t robot_level;  								//机器人等级 1一级，2二级，3三级
-	uint16_t remain_HP; 								//机器人剩余血量
-	uint16_t max_HP; 									//机器人上限血量
-	uint16_t shooter_heat0_cooling_rate;  				//机器人 17mm 1子弹热量冷却速度 单位 /s
-	uint16_t shooter_heat0_cooling_limit;   			//机器人 17mm 1子弹热量上限
-	uint16_t shooter_heat0_speed_limit;					//机器人17mm 1枪口上限速度
-	uint16_t shooter_heat1_cooling_rate;   				//机器人17mm 2枪口每秒冷却值
-	uint16_t shooter_heat1_cooling_limit;  				//机器人17mm 2枪口热量上限
-	uint16_t shooter_heat1_speed_limit;					//机器人17mm 2枪口上限速度
-	uint16_t shooter_42mm_cooling_rate;   				//机器人42mm 枪口每秒冷却值
-	uint16_t shooter_42mm_cooling_limit;  				//机器人42mm 枪口热量上限
-	uint16_t shooter_42mm_speed_limit;					//机器人42mm 枪口上限速度
-	uint16_t max_chassis_power; 						//机器人底盘功率上限
-	uint8_t mains_power_gimbal_output : 1;  			//主控电源云台口输出状态
-	uint8_t mains_power_chassis_output : 1;  			//主控电源底盘口输出状态
-	uint8_t mains_power_shooter_output : 1; 			//主控电源枪管口输出状态
+	uint8_t robot_id;   							//本机器人ID，可用来校验发送
+	uint8_t robot_level;  							//机器人等级 1一级，2二级，3三级
+	uint16_t remain_HP; 							//机器人剩余血量
+	uint16_t max_HP; 								//机器人上限血量
+	uint16_t shooter_heat0_cooling_rate;  			//机器人 17mm 1子弹热量冷却速度 单位 /s
+	uint16_t shooter_heat0_cooling_limit;   		//机器人 17mm 1子弹热量上限
+	uint16_t shooter_heat0_speed_limit;				//机器人17mm 1枪口上限速度
+	uint16_t shooter_heat1_cooling_rate;   			//机器人17mm 2枪口每秒冷却值
+	uint16_t shooter_heat1_cooling_limit;  			//机器人17mm 2枪口热量上限
+	uint16_t shooter_heat1_speed_limit;				//机器人17mm 2枪口上限速度
+	uint16_t shooter_42mm_cooling_rate;   			//机器人42mm 枪口每秒冷却值
+	uint16_t shooter_42mm_cooling_limit;  			//机器人42mm 枪口热量上限
+	uint16_t shooter_42mm_speed_limit;				//机器人42mm 枪口上限速度
+	uint16_t max_chassis_power; 					//机器人底盘功率上限
+	uint8_t mains_power_gimbal_output : 1;  		//主控电源云台口输出状态
+	uint8_t mains_power_chassis_output : 1;  		//主控电源底盘口输出状态
+	uint8_t mains_power_shooter_output : 1; 		//主控电源枪管口输出状态
 } ext_game_robot_state_t;   
 
 /* ID: 0X0202  Byte: 16    实时功率热量数据 */
 typedef __packed struct 
 { 
-	uint16_t chassis_volt;   											//底盘输出电压 mV
-	uint16_t chassis_current;    									//底盘输出电流 mA
-	float chassis_power;   												//底盘输出功率 
-	uint16_t chassis_power_buffer;								//底盘缓冲功率剩余
-	uint16_t shooter_heat0;												//17mm枪口1目前热量
-	uint16_t shooter_heat1;  											//17mm枪口2目前热量
-	uint16_t shooter_heat2_42mm; 								//42mm枪口目前热量
+	uint16_t chassis_volt;   			//底盘输出电压 mV
+	uint16_t chassis_current;    		//底盘输出电流 mA
+	float chassis_power;   				//底盘输出功率 
+	uint16_t chassis_power_buffer;		//底盘缓冲功率剩余
+	uint16_t shooter_heat0;				//17mm枪口1目前热量
+	uint16_t shooter_heat1;  			//17mm枪口2目前热量
+	uint16_t shooter_heat2_42mm; 		//42mm枪口目前热量
 } ext_power_heat_data_t; 
 
 /* ID: 0x0203  Byte: 16    机器人位置数据 */
 typedef __packed struct 
 {   
-	float x;   																		//机器人位置x
-	float y;   																		//机器人位置y
-	float z;   																		//机器人位置z
-	float yaw; 																		//机器人偏航角
+	float x;   							//机器人位置x
+	float y;   							//机器人位置y
+	float z;   							//机器人位置z
+	float yaw; 							//机器人偏航角
 } ext_game_robot_pos_t; 
 
 /* ID: 0x0204  Byte:  1    机器人增益数据 */
 typedef __packed struct 
 { 
-	uint8_t power_rune_buff;											// 
+	uint8_t power_rune_buff;			//0:补血 1:枪口冷却加速 2:防御加成 3:攻击加成
 } ext_buff_musk_t; 
 
 /* ID: 0x0205  Byte:  1    空中机器人能量状态数据 */
 typedef __packed struct 
 { 
-	uint8_t attack_time; 													//可攻击时间
+	uint8_t attack_time; 				//可攻击时间
 } aerial_robot_energy_t; 
 
 /* ID: 0x0206  Byte:  1    伤害状态数据 */
 typedef __packed struct 
 { 
-	uint8_t armor_id : 4; 												//受伤装甲板ID
-	uint8_t hurt_type : 4; 												//血量扣除类型
+	uint8_t armor_id : 4; 				//受伤装甲板ID
+	uint8_t hurt_type : 4; 				//血量扣除类型
 } ext_robot_hurt_t; 
 
 /* ID: 0x0207  Byte:  7    实时射击数据 */
 typedef __packed struct 
 { 
-	uint8_t bullet_type;   												//子弹类型
-	uint8_t shooter_id;   												//发射机构id
-	uint8_t bullet_freq;   												//子弹射频 HZ
-	float bullet_speed;  													//子弹射速 m/s
+	uint8_t bullet_type;   				//子弹类型
+	uint8_t shooter_id;   				//发射机构id
+	uint8_t bullet_freq;   				//子弹射频 HZ
+	float bullet_speed;  				//子弹射速 m/s
 } ext_shoot_data_t; 
 
 
 /* ID: 0x0208  Byte:  6    子弹剩余数量 */
 typedef __packed struct 
 { 
-	uint16_t bullet_remaining_num_17mm;   							//子弹剩余发射数
-	uint16_t bullet_remaining_num_42mm;   							//子弹剩余发射数
-	uint16_t coin_remain;   														//剩余金币
+	uint16_t bullet_remaining_num_17mm;   	//子弹剩余发射数
+	uint16_t bullet_remaining_num_42mm;   	//子弹剩余发射数
+	uint16_t coin_remain;   				//剩余金币
 }  ext_bullet_remaining_t; 
 
 /* ID: 0x0209  Byte:  4    FRID状态 */
 typedef __packed struct 
 { 
-	uint32_t rfid_status ;												//RFID卡状态
+	uint32_t rfid_status ;				//RFID卡状态
 }  ext_rfid_status_t; 
 
 
-/*飞镖机器人客户端指令数据*/
-/* ID: 0x020a  Byte:  4    FRID状态 */
+/* ID: 0x020a  Byte:  4    飞镖机器人客户端指令数据 */
 typedef __packed struct {  
-	uint8_t dart_launch_opening_status;  
-	uint8_t dart_attack_target;  
-	uint16_t target_change_time; 
-	uint16_t operate_launch_cmd_time; 
+	uint8_t dart_launch_opening_status; //飞镖发射口状态
+	uint8_t dart_attack_target;  		//飞镖打击目标 默认前哨站
+	uint16_t target_change_time;		//切换目标时剩余的比赛时间
+	uint16_t operate_launch_cmd_time;	//最近一次操作手确定发射指令时的比赛剩余时间，单位秒, 初始值为 0
 } ext_dart_client_cmd_t; 
 
 /* ID: 0X0301  Byte: n  机器人间交互数据 */
@@ -321,15 +320,18 @@ typedef __packed struct
 
 /********************************************/
 
+
+
 uint8_t get_Robot_Type_Judge(void);		//获取本机器人红方蓝方
 float get_bullet_speed(void);			//获取子弹射速
+bool get_Robot_hit_status(void);		//是否被击打
 
 void Judge_Read_Data(uint8_t *Judge_Usart_Info);
 
-//#elif JUDGE_VERSION == JUDGE_2021
+//#elif JUDGE_VERSION == JUDGE_2022
 
 
-#endif
+#endif	/*JUDGE_VERSION*/
 
-#endif
+#endif	/*__JUDGE_SYSTEM_H__*/
 

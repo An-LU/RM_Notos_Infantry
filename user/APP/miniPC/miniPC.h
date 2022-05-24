@@ -16,7 +16,7 @@
 //是否连接裁判系统
 #define JUDGE_SYSTEM_OFFLINE	0
 #define JUDGE_SYSTEM_ONLINE		1
-#define ROBOT_MODE	JUDGE_SYSTEM_OFFLINE
+#define ROBOT_MODE	JUDGE_SYSTEM_ONLINE//JUDGE_SYSTEM_OFFLINE
 #define RED_ROBOT	1
 #define BLUE_ROBOT	2
 //机器人类型 线下模式 Red:1 Blue:2
@@ -118,7 +118,7 @@ typedef enum
 {
 	ARMOR_PLATE = 0,	//装甲板
 	BUFF_ANTI = 1,		//打符
-	NO_VISION
+	NO_VISION = 2
 }Vision_Mode_e;
 //-----------------------------------【步兵信息结构体】--------------------------------------------
 // brief：包括云台控制模式，pitch角度，yaw角度等信息，是控制步兵运动的数据

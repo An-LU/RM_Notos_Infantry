@@ -400,7 +400,7 @@ static void chassis_key_process(fp32 *vx_ch, fp32 *vy_ch ,int16_t *vw_ch)
 	*vy_ch = (left_ch - right_ch) * KEY_CHASSIS_VY_SEN;
 	//一阶滤波作为斜坡函数
 	first_order_filter_cali(&chassis_info.key_vx_first_OF, *vx_ch);
-	first_order_filter_cali(&chassis_info.key_vx_first_OF, *vy_ch);
+	first_order_filter_cali(&chassis_info.key_vy_first_OF, *vy_ch);
     if (*vx_ch == 0.0f)
         chassis_info.key_vx_first_OF.out = 0.0f;		//滤波输出直接为0 否则会一直减少下去直到溢出
     if (*vy_ch == 0.0f)

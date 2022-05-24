@@ -28,7 +28,7 @@ Project File Date:  04/17/2022
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil v5\ARM\ARMCC\Bin'
 Build target 'standard'
 compiling gimbal_task.c...
-..\user\APP\gimbal_task\gimbal_task.c(219): warning:  #188-D: enumerated type mixed with another type
+..\user\APP\gimbal_task\gimbal_task.c(225): warning:  #188-D: enumerated type mixed with another type
   			gimbal_info.vision_mode = ~gimbal_info.vision_mode;
 ..\user\APP\gimbal_task\gimbal_task.c(34): warning:  #177-D: variable "yaw_ecd_speed_mouse_pid"  was declared but never referenced
   static PidTypeDef yaw_ecd_speed_mouse_pid = { PID_POSITION, YAW_ECD_SPEED_MOUSE_PID_Init };
@@ -42,11 +42,11 @@ compiling gimbal_task.c...
   static PidTypeDef pitch_ecd_speed_mouse_pid = { PID_POSITION, PITCH_ECD_SPEED_MOUSE_PID_Init };
 ..\user\APP\gimbal_task\gimbal_task.c(40): warning:  #177-D: variable "pitch_ecd_angle_mouse_pid"  was declared but never referenced
   static PidTypeDef pitch_ecd_angle_mouse_pid = { PID_POSITION, PITCH_ECD_ANGLE_MOUSE_PID_Init };
-..\user\APP\gimbal_task\gimbal_task.c(550): warning:  #177-D: function "gimbal_pitch_limit"  was declared but never referenced
+..\user\APP\gimbal_task\gimbal_task.c(580): warning:  #177-D: function "gimbal_pitch_limit"  was declared but never referenced
   static void gimbal_pitch_limit(fp32 *pitch_angle)
 ..\user\APP\gimbal_task\gimbal_task.c: 8 warnings, 0 errors
 linking...
-Program Size: Code=40056 RO-data=3444 RW-data=2388 ZI-data=135028  
+Program Size: Code=40596 RO-data=3444 RW-data=2428 ZI-data=135116  
 FromELF: creating hex file...
 ".\Objects\infantry.axf" - 0 Error(s), 8 Warning(s).
 
@@ -61,7 +61,7 @@ Package Vendor: Keil
   D:\Keil v5\ARM\PACK\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:05
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

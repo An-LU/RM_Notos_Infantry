@@ -147,16 +147,18 @@ void USART1_IRQHandler(void)
 void key_scan(RC_ctrl_s *rc_ctrl)
 {
 	uint16_t index,i;
-	for(index = 1,i = 0; index; index<<=1, i++)
+	for(index = 1,i = 0; index; index<<=1, i++)		//遍历所有键
 	{
 		if(rc_ctrl->key.key_code & index)		//按下
 		{
+			if(rc_ctrl->key_data.key_press_time[i] == 32767)
+				rc_ctrl->key_data.key_press_time[i] = 0;
 			rc_ctrl->key_data.key_press_time[i]++;
-			if(rc_ctrl->key_data.key_press_time[i] > 100)  //短按
+			if(rc_ctrl->key_data.key_press_time[i] >= 30)  //短按
 			{
 				rc_ctrl->key_data.key_short_press.key_code &= index;	//短按标志位置1
 			}
-			if(rc_ctrl->key_data.key_press_time[i] > 200)	//长按
+			if(rc_ctrl->key_data.key_press_time[i] >= 60)	//长按
 			{
 				rc_ctrl->key_data.key_short_press.key_code &= ~index;	//短按标志位清0
 				rc_ctrl->key_data.key_long_press.key_code |= index;		//长按标志位置1
@@ -164,14 +166,17 @@ void key_scan(RC_ctrl_s *rc_ctrl)
 		}
 		else		//松开 未按下
 		{
-			if(rc_ctrl->key_data.key_press_time[i] > 50)
+			if(rc_ctrl->key_data.key_press_time[i] > 2 && rc_ctrl->key_data.key_press_time[i] < 30)
 			{
 				rc_ctrl->key_data.key_click.key_code |= index;		//单击标志位置1
 			}
 			else
 			{
 				rc_ctrl->key_data.key_click.key_code &= ~index;		//单击标志位清0
+				rc_ctrl->key_data.key_short_press.key_code &= ~index;
+				rc_ctrl->key_data.key_long_press.key_code &= ~index;	
 			}
+			rc_ctrl->key_data.key_press_time[i] = 0;
 		}
 	}
 }

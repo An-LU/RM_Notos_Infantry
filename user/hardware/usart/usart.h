@@ -10,6 +10,7 @@
 /* 接收缓存 */
 #define		VISION_BUFFER_LEN           100   //稍微给大点
 #define		JUDGE_BUFFER_LEN			100
+#define		DEBUG_BUFFER_LEN			100
 /* 发送数据包大小 */
 #define		VISION_SEND_LEN		20
 
@@ -27,6 +28,7 @@ usart7-->T:PE8	DMA1 ch5 Stream1
 */
 #define	Vision_Uart		UART7
 #define	Judge_Uart		UART8
+#define Debug_Usart		USART6
 
 #define	Vision_Uart_GPIO		GPIOE
 #define	Vision_Uart_Tx			GPIO_Pin_8
@@ -34,7 +36,9 @@ usart7-->T:PE8	DMA1 ch5 Stream1
 #define	Judge_Uart_GPIO			GPIOE
 #define	Judge_Uart_Tx			GPIO_Pin_1
 #define	Judge_Uart_Rx			GPIO_Pin_0
-
+#define	Debug_Usart_GPIO		GPIOG
+#define	Debug_Usart_Tx			GPIO_Pin_14
+#define	Debug_Usart_Rx			GPIO_Pin_9
 
 /* 视觉 */
 void Vision_Usart_Init(void);
@@ -42,7 +46,11 @@ void VisionUart_SendData(uint8_t *Data, uint8_t length);
 /* 裁判系统 */
 void Judge_Usart_Init(void);
 void JudgeUart_SendData(uint8_t *Data, uint8_t length);
+/* 调试 */
+void Debug_Usart_Init(void);
+void DebugUsart_SendData(uint8_t *Data, uint8_t length);
 
+void USART6_SendChar(uint8_t cData);
 void UART7_SendChar(uint8_t cData);
 void UART8_SendChar(uint8_t cData);
 #endif

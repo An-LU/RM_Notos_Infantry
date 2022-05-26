@@ -185,3 +185,21 @@ fp32 theta_format(fp32 Ang)
 {
     return loop_fp32_constrain(Ang, -180.0f, 180.0f);
 }
+////一阶低通滤波初始化
+//void first_order_filter_init(first_order_filter_type_t *first_order_filter, fp32 param, fp32 period)
+//{
+//	first_order_filter->filter_param = param;			//滤波系数
+//	first_order_filter->frame_period = period;			//时间间隔系数
+//	first_order_filter->in = 0.0f;
+//	first_order_filter->out[0] = 0.0f;
+//	first_order_filter->out[1] = 0.0f;
+//}
+////未对比测试
+////一阶低通滤波计算
+void first_order_filter_cali_1(first_order_filter_type_t *first_order_filter, fp32 in)
+{
+	first_order_filter->input = in;
+	//first_order_filter->out[1] = first_order_filter->out[0];
+	first_order_filter->out = first_order_filter->num[0] * first_order_filter->input + 
+								(1 - first_order_filter->num[0]) * first_order_filter->out;
+}

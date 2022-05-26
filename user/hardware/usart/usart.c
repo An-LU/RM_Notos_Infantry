@@ -8,6 +8,7 @@
 
 static uint8_t	Judge_Buffer[ JUDGE_BUFFER_LEN ] = { 0 };
 static uint8_t  Vision_Buffer[ VISION_BUFFER_LEN ] = {0};
+static uint8_t  Debug_Buffer[ DEBUG_BUFFER_LEN ] = {0};
 static int Usart7_Clean_IDLE_Flag = 0;
 static int Usart8_Clean_IDLE_Flag = 0;
 
@@ -83,6 +84,82 @@ void Vision_Usart_Init()
 	//中断配置
 	NvicInitStruct.NVIC_IRQChannel = UART7_IRQn;
 	NvicInitStruct.NVIC_IRQChannelPreemptionPriority = 0;//优先级
+	NvicInitStruct.NVIC_IRQChannelSubPriority = 0;
+	NvicInitStruct.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init( &NvicInitStruct );	
+}
+void Debug_Usart_DMA_Init(void)
+{
+	DMA_InitTypeDef DMAInitStruct;
+	
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2,ENABLE);//DMA2时钟使能 
+	
+	DMA_DeInit( DMA2_Stream0 );
+	//while(DMA_GetCmdStatus(DMA1_Stream3));
+	DMAInitStruct.DMA_Channel = DMA_Channel_6;//通道选择
+	
+	DMAInitStruct.DMA_DIR = DMA_DIR_PeripheralToMemory;//方向外设到存储器
+
+	DMAInitStruct.DMA_PeripheralBaseAddr  = (uint32_t)&(USART6->DR);//DMA外设地址
+	DMAInitStruct.DMA_Memory0BaseAddr     = (uint32_t)Debug_Buffer;//DMA 存储器0地址，缓存数组
+	
+	DMAInitStruct.DMA_DIR = DMA_DIR_PeripheralToMemory;//存储器到外设模式
+	DMAInitStruct.DMA_BufferSize = 100;//数据传输量 
+	DMAInitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;//外设非增量模式
+	DMAInitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;//存储器增量模式
+	DMAInitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;//外设数据长度:8位
+	DMAInitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;//存储器数据长度:8位
+	DMAInitStruct.DMA_Mode = DMA_Mode_Circular;// 连续模式 
+	DMAInitStruct.DMA_Priority = DMA_Priority_VeryHigh;//最高等优先级
+	DMAInitStruct.DMA_FIFOMode = DMA_FIFOMode_Enable;//不开启FIFO
+	DMAInitStruct.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;//FIFO 阈值选择：
+	DMAInitStruct.DMA_MemoryBurst = DMA_MemoryBurst_Single;//存储器突发单次传输
+	DMAInitStruct.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;//外设突发单次传输
+
+	DMA_Init( DMA2_Stream0, &DMAInitStruct );	
+	DMA_Cmd( DMA2_Stream0, ENABLE);
+}
+void Debug_Usart_Init()
+{
+	USART_InitTypeDef UsartInitStruct;
+	GPIO_InitTypeDef GPIOInitStruct;
+	NVIC_InitTypeDef NvicInitStruct;
+	/* 使能时钟 */
+	RCC_AHB1PeriphClockCmd( RCC_AHB1Periph_GPIOG, ENABLE );
+	RCC_APB2PeriphClockCmd( RCC_APB2Periph_USART6, ENABLE );
+	/* 引脚复用 */
+	GPIO_PinAFConfig( Debug_Usart_GPIO, GPIO_PinSource14, GPIO_AF_USART6 );
+	GPIO_PinAFConfig( Debug_Usart_GPIO, GPIO_PinSource9, GPIO_AF_USART6 ); 
+	/*	GPIO TxRx */
+	GPIOInitStruct.GPIO_Mode = GPIO_Mode_AF;
+	GPIOInitStruct.GPIO_OType = GPIO_OType_PP;//推挽复用输出
+	GPIOInitStruct.GPIO_Pin = Debug_Usart_Tx | Debug_Usart_Rx;
+	GPIOInitStruct.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIOInitStruct.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init( Debug_Usart_GPIO, &GPIOInitStruct );
+	/* 串口配置 */
+	UsartInitStruct.USART_BaudRate = 115200;   //波特率
+	UsartInitStruct.USART_WordLength = USART_WordLength_8b;//字长8比特
+	UsartInitStruct.USART_StopBits = USART_StopBits_1;//一个停止位
+	UsartInitStruct.USART_Parity = USART_Parity_No;//无奇偶校验
+	UsartInitStruct.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;//收发模式
+	UsartInitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;//无硬件数据流控制
+
+	USART_Init( Debug_Usart, &UsartInitStruct );
+	USART_Cmd( Debug_Usart, ENABLE );
+
+	//使能串口空闲中断USART_IT_IDLE,连续的一串数据发送完成之后，才触发空闲中断
+	USART_ITConfig( Debug_Usart, USART_IT_IDLE, ENABLE );  
+
+	//DMA串口请求中断
+//	USART_DMACmd( Debug_Usart, USART_DMAReq_Rx, ENABLE );
+//	USART_DMACmd( Debug_Usart, USART_DMAReq_Tx, ENABLE );
+
+	//Debug_Usart_DMA_Init();
+
+	//中断配置
+	NvicInitStruct.NVIC_IRQChannel = USART6_IRQn;
+	NvicInitStruct.NVIC_IRQChannelPreemptionPriority = 4;//优先级
 	NvicInitStruct.NVIC_IRQChannelSubPriority = 0;
 	NvicInitStruct.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init( &NvicInitStruct );	
@@ -164,7 +241,10 @@ void Judge_Usart_Init(void)
 	NVIC_Init( &NvicInitStruct );	
 }
 
-
+void USART6_IRQHandler(void)
+{
+	
+}
 //视觉串口中断服务函数
 void UART7_IRQHandler(void)
 {	
@@ -206,6 +286,24 @@ void UART8_IRQHandler(void)
 		DMA_Cmd(DMA1_Stream6,ENABLE);//D1S2
 	}
 }
+
+//串口发送函数，一次发送一个字节数据
+void USART6_SendChar(uint8_t cData)
+{
+	while (USART_GetFlagStatus( USART6, USART_FLAG_TC ) == RESET);
+	
+	USART_SendData( USART6, cData );   
+}
+void DebugUsart_SendData(uint8_t *Data, uint8_t length)
+{
+	uint8_t i;
+	for(i = 0; i < length; i++)
+	{
+		USART6_SendChar(*Data++);
+		
+	}
+}
+
 //串口发送函数，一次发送一个字节数据
 void UART7_SendChar(uint8_t cData)
 {

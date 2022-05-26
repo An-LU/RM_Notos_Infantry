@@ -27,3 +27,4 @@
 .\objects\start_task.o: ..\user\APP\miniPC\miniPC.h
 .\objects\start_task.o: ..\user\APP\Judge_System\judge_system.h
 .\objects\start_task.o: ..\user\APP\motor_control\motor_control.h
+.\objects\start_task.o: ..\user\APP\communication_task\communication_task.h

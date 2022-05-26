@@ -22,33 +22,21 @@ Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
 F:\ROBOMASTER\RM\²½±ø\standard004-1\Project\standard.uvprojx
-Project File Date:  04/17/2022
+Project File Date:  05/25/2022
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil v5\ARM\ARMCC\Bin'
 Build target 'standard'
-compiling gimbal_task.c...
-..\user\APP\gimbal_task\gimbal_task.c(225): warning:  #188-D: enumerated type mixed with another type
-  			gimbal_info.vision_mode = ~gimbal_info.vision_mode;
-..\user\APP\gimbal_task\gimbal_task.c(34): warning:  #177-D: variable "yaw_ecd_speed_mouse_pid"  was declared but never referenced
-  static PidTypeDef yaw_ecd_speed_mouse_pid = { PID_POSITION, YAW_ECD_SPEED_MOUSE_PID_Init };
-..\user\APP\gimbal_task\gimbal_task.c(35): warning:  #177-D: variable "yaw_ecd_angle_mouse_pid"  was declared but never referenced
-  static PidTypeDef yaw_ecd_angle_mouse_pid = { PID_POSITION, YAW_ECD_ANGLE_MOUSE_PID_Init };
-..\user\APP\gimbal_task\gimbal_task.c(36): warning:  #177-D: variable "yaw_gyro_speed_mouse_pid"  was declared but never referenced
-  static PidTypeDef yaw_gyro_speed_mouse_pid = { PID_POSITION, YAW_GYRO_SPEED_MOUSE_PID_Init };
-..\user\APP\gimbal_task\gimbal_task.c(37): warning:  #177-D: variable "yaw_gyro_angle_mouse_pid"  was declared but never referenced
-  static PidTypeDef yaw_gyro_angle_mouse_pid = { PID_POSITION, YAW_GYRO_ANGLE_MOUSE_PID_Init };
-..\user\APP\gimbal_task\gimbal_task.c(39): warning:  #177-D: variable "pitch_ecd_speed_mouse_pid"  was declared but never referenced
-  static PidTypeDef pitch_ecd_speed_mouse_pid = { PID_POSITION, PITCH_ECD_SPEED_MOUSE_PID_Init };
-..\user\APP\gimbal_task\gimbal_task.c(40): warning:  #177-D: variable "pitch_ecd_angle_mouse_pid"  was declared but never referenced
-  static PidTypeDef pitch_ecd_angle_mouse_pid = { PID_POSITION, PITCH_ECD_ANGLE_MOUSE_PID_Init };
-..\user\APP\gimbal_task\gimbal_task.c(580): warning:  #177-D: function "gimbal_pitch_limit"  was declared but never referenced
-  static void gimbal_pitch_limit(fp32 *pitch_angle)
-..\user\APP\gimbal_task\gimbal_task.c: 8 warnings, 0 errors
+compiling start_task.c...
+..\user\APP\start_task\start_task.c(58): warning:  #177-D: variable "CalibrateTask_Handler"  was declared but never referenced
+  static TaskHandle_t CalibrateTask_Handler;
+..\user\APP\start_task\start_task.c(62): warning:  #177-D: variable "DetectTask_Handler"  was declared but never referenced
+  static TaskHandle_t DetectTask_Handler;
+..\user\APP\start_task\start_task.c: 2 warnings, 0 errors
 linking...
-Program Size: Code=40596 RO-data=3444 RW-data=2428 ZI-data=135116  
+Program Size: Code=41204 RO-data=3444 RW-data=2440 ZI-data=135264  
 FromELF: creating hex file...
-".\Objects\infantry.axf" - 0 Error(s), 8 Warning(s).
+".\Objects\infantry.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 

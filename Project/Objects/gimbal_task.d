@@ -20,6 +20,8 @@
 .\objects\gimbal_task.o: D:\Keil v5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\gimbal_task.o: ..\User\APP\Shoot\shoot.h
 .\objects\gimbal_task.o: ..\User\APP\Detect_Task\Detect_Task.h
+.\objects\gimbal_task.o: ..\user\hardware\usart\usart.h
+.\objects\gimbal_task.o: ..\User\hardware\SYS\sys.h
 .\objects\gimbal_task.o: ..\User\FreeRTOS\include\FreeRTOSConfig.h
 .\objects\gimbal_task.o: ..\User\FreeRTOS\include\FreeRTOS.h
 .\objects\gimbal_task.o: D:\Keil v5\ARM\ARMCC\Bin\..\include\stddef.h

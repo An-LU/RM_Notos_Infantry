@@ -90,11 +90,11 @@
 ".\objects\pid.o"
 ".\objects\shoot.o"
 ".\objects\start_task.o"
-".\objects\user_task.o"
 ".\objects\minipc.o"
 ".\objects\judge_system.o"
 ".\objects\motor_control.o"
 ".\objects\rc_dt7.o"
+".\objects\communication_task.o"
 --library_type=microlib --strict --scatter ".\Objects\infantry.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

@@ -8,6 +8,7 @@
 #include "CAN_Receive.h"
 #include "Detect_Task.h"
 #include "pid.h"
+#include "usart.h"
 
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
@@ -21,6 +22,9 @@ uint32_t gimbal_high_water;
 static Gimbal_Control_s gimbal_info;
 //发送的云台can 指令
 static int16_t Yaw_Can_Set_Voltage = 0, Pitch_Can_Set_Voltage = 0, Shoot_Can_Set_Voltage = 0;
+
+//static fp32 send_buff[6] = {0.0};//{1.1, 3.2, 4.3, 5.4, 6.5, 7.6};
+//const uint8_t tail[4] = {0x00, 0x00, 0x80, 0x7f};
 /**************************PID**********************************/
 //yaw 手动控制PID
 static PidTypeDef yaw_ecd_speed_rc_pid = { PID_POSITION, YAW_ECD_SPEED_RC_PID_Init };
@@ -75,6 +79,8 @@ static void gimbal_mouse_process(fp32 *, fp32 *);
 static void gimbal_auto_process(fp32 *, fp32 *);
 static void gimbal_buff_anti_process(fp32 *, fp32 *, uint8_t move_status);
 static void gimbal_pitch_limit(fp32 *);
+static void gimbal_debug_send(void);
+
 void GIMBAL_task(void *pvParameters)
 {
     //等待陀螺仪任务更新陀螺仪数据
@@ -92,8 +98,10 @@ void GIMBAL_task(void *pvParameters)
 
     while (1)
     {
-		//miniPC需要的数据
-		Data_Send_to_Vision();
+//		//miniPC需要的数据
+//		Data_Send_to_Vision();
+//		//调试
+//		gimbal_debug_send();
 		//模式 遥控 自动 无力
 		Gimbal_mode_set();
 		//云台数据更新
@@ -628,14 +636,22 @@ static void gimbal_mouse_process(fp32 *yaw_add, fp32 *pitch_add)
 static void gimbal_rc_process(fp32 *yaw_add, fp32 *pitch_add)
 {
 	//初始化相关变量
-	int16_t yaw_channel = 0;
-	int16_t pitch_channel = 0;
+	fp32 yaw_channel = 0;
+	fp32 pitch_channel = 0;
 
-	yaw_channel = gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL];
-	pitch_channel = gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL];
+	yaw_channel = gimbal_info.gimbal_RC->rc.ch[GIMBAL_YAW_CHANNEL] * YAW_RC_SEN;
+	pitch_channel = gimbal_info.gimbal_RC->rc.ch[GIMBAL_PITCH_CHANNEL] * PITCH_RC_SEN;
+	
+	first_order_filter_cali(&gimbal_info.yaw_motor.gimbal_motor_first_OF, yaw_channel);
+	first_order_filter_cali(&gimbal_info.pitch_motor.gimbal_motor_first_OF, pitch_channel);
+	//停止信号 直接减到零
+	if (yaw_channel < RC_DEADLINE * YAW_RC_SEN && yaw_channel > -RC_DEADLINE * YAW_RC_SEN)
+		gimbal_info.yaw_motor.gimbal_motor_first_OF.out = 0.0f;
+	if (pitch_channel < RC_DEADLINE * PITCH_RC_SEN && pitch_channel > -RC_DEADLINE * PITCH_RC_SEN)
+		gimbal_info.pitch_motor.gimbal_motor_first_OF.out = 0.0f;
 	//遥控数据比例转换
-	*yaw_add = yaw_channel * YAW_RC_SEN;
-	*pitch_add = pitch_channel * PITCH_RC_SEN;
+	*yaw_add = gimbal_info.yaw_motor.gimbal_motor_first_OF.out;
+	*pitch_add = gimbal_info.pitch_motor.gimbal_motor_first_OF.out;
 }
 //自瞄数据处理
 static void gimbal_auto_process(fp32 *yaw_add, fp32 *pitch_add)
@@ -645,6 +661,8 @@ static void gimbal_auto_process(fp32 *yaw_add, fp32 *pitch_add)
 	//需要实际对数据进行调整 加减偏移数据
 	auto_yaw_channel = gimbal_info.gimbal_AUTO_ctrl->yaw_angle * YAW_AUTO_SEN;
 	auto_pitch_channel = gimbal_info.gimbal_AUTO_ctrl->pitch_angle * PITCH_AUTO_SEN;
+	
+	
 	*yaw_add = auto_yaw_channel;
 	*pitch_add = auto_pitch_channel;
 	Vision_clean_flag();

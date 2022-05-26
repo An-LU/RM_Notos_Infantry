@@ -112,8 +112,10 @@ void BSP_init(void)
 	//视觉串口初始化
 	Vision_Usart_Init();
 	Vision_Init();
-	
+	//裁判系统
 	Judge_Usart_Init();
+	//调试
+	Debug_Usart_Init();
 	//超级电容初始化
 	super_cap_configuration();
     //定时器6 初始化

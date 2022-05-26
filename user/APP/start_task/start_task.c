@@ -27,6 +27,7 @@
 #include "INS_Task.h"
 #include "Chassis_Task.h"
 #include "Gimbal_Task.h"
+#include "communication_task.h"
 
 #define INS_TASK_PRIO 20
 #define INS_TASK_SIZE 512
@@ -40,9 +41,13 @@ TaskHandle_t GIMBALTask_Handler;
 #define Chassis_STK_SIZE 512
 TaskHandle_t ChassisTask_Handler;
 
-#define User_TASK_PRIO 10
-#define User_STK_SIZE 256
-static TaskHandle_t UserTask_Handler;
+//#define User_TASK_PRIO 10
+//#define User_STK_SIZE 256
+//static TaskHandle_t UserTask_Handler;
+
+#define Communication_TASK_PRIO 10
+#define Communication_STK_SIZE	256
+static TaskHandle_t CommunicationTask_Handler;
 
 #define START_TASK_PRIO 1
 #define START_STK_SIZE 512
@@ -81,6 +86,13 @@ void start_task(void *pvParameters)
                 (UBaseType_t)Chassis_TASK_PRIO,
                 (TaskHandle_t *)&ChassisTask_Handler);
 
+    xTaskCreate((TaskFunction_t)communication_task,//通信任务
+                (const char *)"CommunicationTask",
+                (uint16_t)Communication_STK_SIZE,
+                (void *)NULL,
+                (UBaseType_t)Communication_TASK_PRIO,
+                (TaskHandle_t *)&CommunicationTask_Handler);
+				
 //    xTaskCreate((TaskFunction_t)UserTask,//心跳程序获取姿态角
 //                (const char *)"UserTask",
 //                (uint16_t)User_STK_SIZE,

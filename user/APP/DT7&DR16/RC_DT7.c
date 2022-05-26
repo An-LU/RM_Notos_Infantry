@@ -172,11 +172,11 @@ void key_scan(RC_ctrl_s *rc_ctrl)
 			}
 			else
 			{
-				rc_ctrl->key_data.key_click.key_code &= ~index;		//单击标志位清0
-				rc_ctrl->key_data.key_short_press.key_code &= ~index;
-				rc_ctrl->key_data.key_long_press.key_code &= ~index;	
+				rc_ctrl->key_data.key_click.key_code &= ~index;		//单击标志位清0	
 			}
 			rc_ctrl->key_data.key_press_time[i] = 0;
+			rc_ctrl->key_data.key_short_press.key_code &= ~index;
+			rc_ctrl->key_data.key_long_press.key_code &= ~index;
 		}
 	}
 }

@@ -79,8 +79,8 @@
       </OPTFL>
       <CpuCode>18</CpuCode>
       <DebugOpt>
-        <uSim>0</uSim>
-        <uTrg>1</uTrg>
+        <uSim>1</uSim>
+        <uTrg>0</uTrg>
         <sLdApp>1</sLdApp>
         <sGomain>1</sGomain>
         <sRbreak>1</sRbreak>
@@ -108,7 +108,7 @@
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
         <sDlgPa></sDlgPa>
-        <sIfile></sIfile>
+        <sIfile>D:\Keil v5\Debugconfig- CORTEX-M4.ini</sIfile>
         <tDll></tDll>
         <tDllPa></tDllPa>
         <tDlgDll></tDlgDll>
@@ -1120,7 +1120,7 @@
 
   <Group>
     <GroupName>hardware</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1487,18 +1487,6 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\user\APP\user_task\user_task.c</PathWithFileName>
-      <FilenameWithoutPath>user_task.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>10</GroupNumber>
-      <FileNumber>93</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
       <PathWithFileName>..\user\APP\miniPC\miniPC.c</PathWithFileName>
       <FilenameWithoutPath>miniPC.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -1506,7 +1494,7 @@
     </File>
     <File>
       <GroupNumber>10</GroupNumber>
-      <FileNumber>94</FileNumber>
+      <FileNumber>93</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1518,7 +1506,7 @@
     </File>
     <File>
       <GroupNumber>10</GroupNumber>
-      <FileNumber>95</FileNumber>
+      <FileNumber>94</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1530,13 +1518,25 @@
     </File>
     <File>
       <GroupNumber>10</GroupNumber>
-      <FileNumber>96</FileNumber>
+      <FileNumber>95</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\user\APP\DT7&amp;DR16\RC_DT7.c</PathWithFileName>
       <FilenameWithoutPath>RC_DT7.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>96</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\user\APP\communication_task\communication_task.c</PathWithFileName>
+      <FilenameWithoutPath>communication_task.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

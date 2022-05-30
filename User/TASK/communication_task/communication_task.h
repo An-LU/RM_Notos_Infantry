@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-#define COMMUNICATION_CONTROL_TIME_MS 5
+#define COMMUNICATION_CONTROL_TIME_MS 1
 #define COMMUNICATION_LENGTH	6
 
 typedef __packed struct

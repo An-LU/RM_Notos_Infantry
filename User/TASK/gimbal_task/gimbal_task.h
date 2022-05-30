@@ -29,8 +29,8 @@
 #define YAW_MOUSE_SEN	0.000001f
 #define PITCH_MOUSE_SEN	-0.000001f
 //自瞄数据输入比例
-#define YAW_AUTO_SEN    0.0055f//-0.0055f
-#define PITCH_AUTO_SEN  0.0044f//-0.07f //0.005
+#define YAW_AUTO_SEN    0.15f//0.0055f//-0.0055f
+#define PITCH_AUTO_SEN  0.14f//0.0044f//-0.07f //0.005
 //云台回中速度
 #define GIMBAL_RETURN_PITCH	0.0008f
 #define GIMBAL_RETURN_YAW	0.001f//0.0008f
@@ -191,6 +191,7 @@ extern fp32 get_gimbal_relative_angle(void);
 extern void GIMBAL_task(void *pvParameters);
 fp32 get_gimbal_pitch_offset_angle(void);
 fp32 get_gimbal_yaw_offset_angle(void);
-
+const PidTypeDef *get_yaw_angle_pid_angle(void);
+const PidTypeDef *get_yaw_speed_pid_angle(void);
 #endif
 

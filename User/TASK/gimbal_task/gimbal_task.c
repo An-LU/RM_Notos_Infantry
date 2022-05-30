@@ -710,4 +710,12 @@ fp32 get_gimbal_yaw_offset_angle(void)
 {
 	return gimbal_info.yaw_motor.offset_angle;
 }
+const PidTypeDef *get_yaw_speed_pid_angle(void)
+{
+	return &yaw_gyro_speed_rc_pid;
+}
+const PidTypeDef *get_yaw_angle_pid_angle(void)
+{
+	return &yaw_gyro_angle_rc_pid;
+}
 

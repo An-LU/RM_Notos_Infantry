@@ -49,8 +49,6 @@
 .\objects\ins_task.o: ..\AHRS\mpu6500driver_middleware.h
 .\objects\ins_task.o: ..\AHRS\AHRS.h
 .\objects\ins_task.o: ..\AHRS\AHRS_MiddleWare.h
-.\objects\ins_task.o: ..\User\TASK\calibrate_task\calibrate_Task.h
-.\objects\ins_task.o: ..\User\BSP\rc\rc.h
 .\objects\ins_task.o: ..\User\APP\pid\pid.h
 .\objects\ins_task.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 .\objects\ins_task.o: ..\FreeRTOS\include\FreeRTOS.h

@@ -93,8 +93,8 @@
 ".\objects\gimbal_task.o"
 ".\objects\communication_task.o"
 ".\objects\ins_task.o"
-".\objects\calibrate_task.o"
 ".\objects\detect_task.o"
+".\objects\ammo_booster_task.o"
 --library_type=microlib --strict --scatter ".\Objects\ntos_sentry.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

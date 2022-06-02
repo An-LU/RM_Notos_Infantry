@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F427X,USE_STDPERIPH_DRIVER,__FPU_USED,__FPU_PRESENT,ARM_MATH_CM4,__CC_ARM,ARM_MATH_MATRIX_CHECK,ARM_MATH_ROUNDING</Define>
               <Undefine></Undefine>
-              <IncludePath>..\User;..\AHRS;..\FreeRTOS\include;..\Libraries\CMSIS;..\Libraries\FWLIB\inc;..\DSP\Include;..\FreeRTOS\portable\RVDS\ARM_CM4F;..\User\BSP\adc;..\User\BSP\buzzer;..\User\BSP\can;..\User\BSP\crc;..\User\BSP\delay;..\User\BSP\exit_init;..\User\BSP\flash;..\User\BSP\fric;..\User\BSP\laser;..\User\BSP\led;..\User\BSP\OLED;..\User\BSP\power_ctrl;..\User\BSP\rc;..\User\BSP\rng;..\User\BSP\spi;..\User\BSP\super_cap;..\User\BSP\sys;..\User\BSP\timer;..\User\BSP\usart;..\User\APP\CAN_receive;..\User\APP\DT7&amp;DR16;..\User\APP\FreeRTOS_middleware;..\User\APP\Judge_System;..\User\APP\miniPC;..\User\APP\motor_control;..\User\APP\pid;..\User\APP\shoot;..\User\APP\user_lib;..\User\TASK\chassis_task;..\User\TASK\gimbal_task;..\User\TASK\communication_task;..\User\TASK\INS_task;..\User\TASK\start_task;..\User\TASK\detect_task;..\User\TASK\calibrate_task</IncludePath>
+              <IncludePath>..\User;..\AHRS;..\FreeRTOS\include;..\Libraries\CMSIS;..\Libraries\FWLIB\inc;..\DSP\Include;..\FreeRTOS\portable\RVDS\ARM_CM4F;..\User\BSP\adc;..\User\BSP\buzzer;..\User\BSP\can;..\User\BSP\crc;..\User\BSP\delay;..\User\BSP\exit_init;..\User\BSP\flash;..\User\BSP\fric;..\User\BSP\laser;..\User\BSP\led;..\User\BSP\OLED;..\User\BSP\power_ctrl;..\User\BSP\rc;..\User\BSP\rng;..\User\BSP\spi;..\User\BSP\super_cap;..\User\BSP\sys;..\User\BSP\timer;..\User\BSP\usart;..\User\APP\CAN_receive;..\User\APP\DT7&amp;DR16;..\User\APP\FreeRTOS_middleware;..\User\APP\Judge_System;..\User\APP\miniPC;..\User\APP\motor_control;..\User\APP\pid;..\User\APP\shoot;..\User\APP\user_lib;..\User\TASK\chassis_task;..\User\TASK\gimbal_task;..\User\TASK\communication_task;..\User\TASK\INS_task;..\User\TASK\start_task;..\User\TASK\detect_task;..\User\TASK\ammo_booster_task</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -914,14 +914,14 @@
               <FilePath>..\User\TASK\INS_task\INS_task.c</FilePath>
             </File>
             <File>
-              <FileName>calibrate_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\TASK\calibrate_task\calibrate_task.c</FilePath>
-            </File>
-            <File>
               <FileName>detect_task.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\TASK\detect_task\detect_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>ammo_booster_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\TASK\ammo_booster_task\ammo_booster_task.c</FilePath>
             </File>
           </Files>
         </Group>

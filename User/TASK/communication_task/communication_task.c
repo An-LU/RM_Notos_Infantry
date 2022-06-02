@@ -4,6 +4,7 @@
 #include "usart.h"
 #include "miniPC.h"
 #include "string.h"
+#include "INS_task.h"
 
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
@@ -17,6 +18,7 @@ static const Gimbal_Motor_s *yaw_motor, *pitch_motor;
 static const Chassis_Control_s *chassis_control;
 static const PidTypeDef *yaw_speed;
 static const PidTypeDef *yaw_angle;
+const fp32 *INS_data_test;
 
 void communication_Init(void);
 static void gimbal_debug_send(void);
@@ -50,6 +52,7 @@ void communication_Init(void)
 	pitch_motor = get_gimbal_pitch_motor_point();
 	yaw_speed = get_yaw_speed_pid_angle();
 	yaw_angle = get_yaw_angle_pid_angle();
+	INS_data_test = get_INS_angle_point();
 }
 static void chassis_debug_send(void)
 {
@@ -59,13 +62,16 @@ static void gimbal_debug_send(void)
 {
 //	VOFA_UsartSend.send_buff[0] = yaw_motor->relative_angle;
 //	VOFA_UsartSend.send_buff[1] = pitch_motor->relative_angle;
-	VOFA_UsartSend.send_buff[0] = yaw_speed->out;
+//	VOFA_UsartSend.send_buff[0] = yaw_speed->out;
+	VOFA_UsartSend.send_buff[0] = yaw_motor->gyro_now;
 	VOFA_UsartSend.send_buff[1] = yaw_angle->error[0];
 	VOFA_UsartSend.send_buff[2] = yaw_motor->absolute_angle;
 	VOFA_UsartSend.send_buff[3] = yaw_motor->absolute_angle_set;
 	//VOFA_UsartSend.send_buff[3] = pitch_motor->absolute_angle;
-	VOFA_UsartSend.send_buff[4] = yaw_motor->gyro_turn_table;
+	//VOFA_UsartSend.send_buff[4] = yaw_motor->gyro_turn_table;
+	VOFA_UsartSend.send_buff[4] = INS_data_test[INS_YAW_ADDRESS_OFFSET];
 	VOFA_UsartSend.send_buff[5] = yaw_motor->speed_set;
+	VOFA_UsartSend.send_buff[5] = (fp32)get_turn_circle_num();
 	//VOFA_UsartSend.send_buff[5] = pitch_motor->speed;
 	//DebugUsart_SendData((uint8_t *)&VOFA_UsartSend, sizeof(VOFA_UsartSend));
 	JudgeUart_SendData((uint8_t *)&VOFA_UsartSend, sizeof(VOFA_UsartSend));

@@ -28,21 +28,21 @@
             input = -max;      \
         }                      \
     }
-void PID_Init_1(PidTypeDef *pid, uint8_t mode, const fp32 pid_init[5])
-{
-    if (pid == NULL || pid_init == NULL)
-    {
-        return;
-    }
-    pid->mode = mode;
-    pid->Kp = pid_init[0];
-    pid->Ki = pid_init[1];
-    pid->Kd = pid_init[2];
-    pid->max_out = pid_init[3];
-    pid->max_iout = pid_init[4];
-    pid->Dbuf[0] = pid->Dbuf[1] = pid->Dbuf[2] = 0.0f;
-    pid->error[0] = pid->error[1] = pid->error[2] = pid->Pout = pid->Iout = pid->Dout = pid->out = 0.0f;
-}
+//void PID_Init_1(PidTypeDef *pid, uint8_t mode, const fp32 pid_init[5])
+//{
+//    if (pid == NULL || pid_init == NULL)
+//    {
+//        return;
+//    }
+//    pid->mode = mode;
+//    pid->Kp = pid_init[0];
+//    pid->Ki = pid_init[1];
+//    pid->Kd = pid_init[2];
+//    pid->max_out = pid_init[3];
+//    pid->max_iout = pid_init[4];
+//    pid->Dbuf[0] = pid->Dbuf[1] = pid->Dbuf[2] = 0.0f;
+//    pid->error[0] = pid->error[1] = pid->error[2] = pid->Pout = pid->Iout = pid->Dout = pid->out = 0.0f;
+//}
 void PID_Init(PidTypeDef *pid, uint8_t mode, const fp32 PID[3], fp32 max_out, fp32 max_iout)
 {
     if (pid == NULL || PID == NULL)

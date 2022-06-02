@@ -20,7 +20,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "calibrate_task.h"
+//#include "calibrate_task.h"
 #include "RC_DT7.h"
 #include "start_task.h"
 #include "oled.h"
@@ -97,5 +97,5 @@ void BSP_init(void)
     //遥控器初始化
     remote_control_init();//波特率100000
     //flash读取函数，把校准值放回对应参数
-    cali_param_init();
+    //cali_param_init();
 }

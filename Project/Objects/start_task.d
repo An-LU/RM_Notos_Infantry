@@ -14,8 +14,6 @@
 .\objects\start_task.o: ..\FreeRTOS\include\task.h
 .\objects\start_task.o: ..\FreeRTOS\include\list.h
 .\objects\start_task.o: ..\User\TASK\detect_task\Detect_Task.h
-.\objects\start_task.o: ..\User\TASK\calibrate_task\Calibrate_Task.h
-.\objects\start_task.o: ..\User\BSP\rc\rc.h
 .\objects\start_task.o: ..\User\TASK\INS_task\INS_Task.h
 .\objects\start_task.o: ..\User\TASK\chassis_task\Chassis_Task.h
 .\objects\start_task.o: ..\User\APP\CAN_receive\CAN_Receive.h

@@ -20,6 +20,7 @@
 #define PITCH_ECD_MAX	5966//3811
 #define PITCH_ECD_MIN	4565//2036
 #define PITCH_ECD_DEL	5412//2696
+#define PITCH_LIMIT		0.5f		//pitch轴限位 弧度制
 /*******************相关机械角度_END**********************************/
 
 //yaw，pitch角度与遥控器输入比例
@@ -193,5 +194,8 @@ fp32 get_gimbal_pitch_offset_angle(void);
 fp32 get_gimbal_yaw_offset_angle(void);
 const PidTypeDef *get_yaw_angle_pid_angle(void);
 const PidTypeDef *get_yaw_speed_pid_angle(void);
+int16_t get_turn_circle_num(void);
+
+
 #endif
 

@@ -5,7 +5,7 @@
 #include "task.h"
 
 #include "Detect_Task.h"
-#include "Calibrate_Task.h"
+//#include "Calibrate_Task.h"
 //#include "User_Task.h"
 #include "INS_Task.h"
 #include "Chassis_Task.h"
@@ -36,9 +36,9 @@ static TaskHandle_t CommunicationTask_Handler;
 #define START_STK_SIZE 512
 static TaskHandle_t StartTask_Handler;
 
-#define CALIBRATE_TASK_PRIO 5
-#define CALIBRATE_STK_SIZE 512
-static TaskHandle_t CalibrateTask_Handler;
+//#define CALIBRATE_TASK_PRIO 5
+//#define CALIBRATE_STK_SIZE 512
+//static TaskHandle_t CalibrateTask_Handler;
 
 #define Detect_TASK_PRIO 10
 #define Detect_STK_SIZE 512

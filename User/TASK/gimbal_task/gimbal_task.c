@@ -372,13 +372,13 @@ static void Gimbal_Control(void)
 		{
 			Gimbal_Gyro_mode(&add_pitch_angle, &add_yaw_angle, vision_flag);
 			//gimbal_pitch_limit(&gimbal_info.pitch_motor.absolute_angle_set);	//pitch轴限位
-			//gimbal_pitch_limit(&gimbal_info.pitch_motor.relative_angle_set);
+			gimbal_pitch_limit(&gimbal_info.pitch_motor.relative_angle_set);
 			break;
 		}
 		case GIMBAL_ENCONDE:	//机械控制模式
 		{
 			Gimbal_Enconde_mode(&add_pitch_angle, &add_yaw_angle, vision_flag);
-			//gimbal_pitch_limit(&gimbal_info.pitch_motor.relative_angle_set);	//pitch轴限位
+			gimbal_pitch_limit(&gimbal_info.pitch_motor.relative_angle_set);	//pitch轴限位
 			break;
 		}
 	}
@@ -586,8 +586,8 @@ static void gimbal_pitch_limit(fp32 *pitch_angle)
 	//如果已回中
 	if(gimbal_info.turn_mid_flag)
 	{
-		*pitch_angle = *pitch_angle > PITCH_ECD_MAX ? PITCH_ECD_MAX : *pitch_angle;
-		*pitch_angle = *pitch_angle < PITCH_ECD_MIN ? PITCH_ECD_MIN : *pitch_angle;
+		*pitch_angle = *pitch_angle > PITCH_LIMIT ? PITCH_LIMIT : *pitch_angle;
+		*pitch_angle = *pitch_angle < -PITCH_LIMIT ? -PITCH_LIMIT : *pitch_angle;
 	}
 }
 //打符数据处理
@@ -718,4 +718,9 @@ const PidTypeDef *get_yaw_angle_pid_angle(void)
 {
 	return &yaw_gyro_angle_rc_pid;
 }
+int16_t get_turn_circle_num(void)
+{
+	return gimbal_info.turn_circle_num;
+}
+
 

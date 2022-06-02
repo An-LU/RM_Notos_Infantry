@@ -61,7 +61,6 @@
 .\objects\main.o: ..\FreeRTOS\include\mpu_wrappers.h
 .\objects\main.o: ..\FreeRTOS\include\task.h
 .\objects\main.o: ..\FreeRTOS\include\list.h
-.\objects\main.o: ..\User\TASK\calibrate_task\calibrate_task.h
 .\objects\main.o: ..\User\APP\DT7&DR16\RC_DT7.h
 .\objects\main.o: ..\User\TASK\start_task\start_task.h
 .\objects\main.o: ..\User\BSP\OLED\oled.h

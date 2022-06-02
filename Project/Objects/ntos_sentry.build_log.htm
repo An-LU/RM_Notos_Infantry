@@ -22,70 +22,19 @@ Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
 F:\ROBOMASTER\RM\²½±ø\RM2022_notos_Infantry\Infantry_002\Project\notos_Infantry.uvprojx
-Project File Date:  05/26/2022
+Project File Date:  06/02/2022
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil v5\ARM\ARMCC\Bin'
 Build target 'notos'
 compiling start_task.c...
-..\User\TASK\start_task\start_task.c(41): warning:  #177-D: variable "CalibrateTask_Handler"  was declared but never referenced
-  static TaskHandle_t CalibrateTask_Handler;
 ..\User\TASK\start_task\start_task.c(45): warning:  #177-D: variable "DetectTask_Handler"  was declared but never referenced
   static TaskHandle_t DetectTask_Handler;
-..\User\TASK\start_task\start_task.c: 2 warnings, 0 errors
-compiling miniPC.c...
-..\User\APP\miniPC\miniPC.c(132): warning:  #177-D: variable "a"  was declared but never referenced
-  	uint8_t a = sizeof(stm32_info);
-..\User\APP\miniPC\miniPC.c: 1 warning, 0 errors
-compiling chassis_task.c...
-compiling communication_task.c...
-..\User\TASK\communication_task\communication_task.c(16): warning:  #550-D: variable "pitch_motor"  was set but never used
-  static const Gimbal_Motor_s *yaw_motor, *pitch_motor;
-..\User\TASK\communication_task\communication_task.c(17): warning:  #177-D: variable "chassis_control"  was declared but never referenced
-  static const Chassis_Control_s *chassis_control;
-..\User\TASK\communication_task\communication_task.c(54): warning:  #177-D: function "chassis_debug_send"  was declared but never referenced
-  static void chassis_debug_send(void)
-..\User\TASK\communication_task\communication_task.c(81): warning:  #177-D: function "buff_clean"  was declared but never referenced
-  static void buff_clean(void)
-..\User\TASK\communication_task\communication_task.c(25): warning:  #550-D: variable "flag"  was set but never used
-  static uint8_t flag;
-..\User\TASK\communication_task\communication_task.c: 5 warnings, 0 errors
-compiling usart.c...
-..\User\BSP\usart\usart.c(12): warning:  #550-D: variable "Usart7_Clean_IDLE_Flag"  was set but never used
-  static int Usart7_Clean_IDLE_Flag = 0;
-..\User\BSP\usart\usart.c(13): warning:  #550-D: variable "Usart8_Clean_IDLE_Flag"  was set but never used
-  static int Usart8_Clean_IDLE_Flag = 0;
-..\User\BSP\usart\usart.c: 2 warnings, 0 errors
-compiling shoot.c...
-compiling calibrate_task.c...
-..\User\TASK\calibrate_task\calibrate_task.c(358): warning:  #177-D: variable "local_cali_t"  was declared but never referenced
-      gimbal_cali_t *local_cali_t = (gimbal_cali_t *)cali;
-..\User\TASK\calibrate_task\calibrate_task.c: 1 warning, 0 errors
-compiling gimbal_task.c...
-..\User\TASK\gimbal_task\gimbal_task.c(229): warning:  #188-D: enumerated type mixed with another type
-  			gimbal_info.vision_mode = ~gimbal_info.vision_mode;
-..\User\TASK\gimbal_task\gimbal_task.c(38): warning:  #177-D: variable "yaw_ecd_speed_mouse_pid"  was declared but never referenced
-  static PidTypeDef yaw_ecd_speed_mouse_pid = { PID_POSITION, YAW_ECD_SPEED_MOUSE_PID_Init };
-..\User\TASK\gimbal_task\gimbal_task.c(39): warning:  #177-D: variable "yaw_ecd_angle_mouse_pid"  was declared but never referenced
-  static PidTypeDef yaw_ecd_angle_mouse_pid = { PID_POSITION, YAW_ECD_ANGLE_MOUSE_PID_Init };
-..\User\TASK\gimbal_task\gimbal_task.c(40): warning:  #177-D: variable "yaw_gyro_speed_mouse_pid"  was declared but never referenced
-  static PidTypeDef yaw_gyro_speed_mouse_pid = { PID_POSITION, YAW_GYRO_SPEED_MOUSE_PID_Init };
-..\User\TASK\gimbal_task\gimbal_task.c(41): warning:  #177-D: variable "yaw_gyro_angle_mouse_pid"  was declared but never referenced
-  static PidTypeDef yaw_gyro_angle_mouse_pid = { PID_POSITION, YAW_GYRO_ANGLE_MOUSE_PID_Init };
-..\User\TASK\gimbal_task\gimbal_task.c(43): warning:  #177-D: variable "pitch_ecd_speed_mouse_pid"  was declared but never referenced
-  static PidTypeDef pitch_ecd_speed_mouse_pid = { PID_POSITION, PITCH_ECD_SPEED_MOUSE_PID_Init };
-..\User\TASK\gimbal_task\gimbal_task.c(44): warning:  #177-D: variable "pitch_ecd_angle_mouse_pid"  was declared but never referenced
-  static PidTypeDef pitch_ecd_angle_mouse_pid = { PID_POSITION, PITCH_ECD_ANGLE_MOUSE_PID_Init };
-..\User\TASK\gimbal_task\gimbal_task.c(584): warning:  #177-D: function "gimbal_pitch_limit"  was declared but never referenced
-  static void gimbal_pitch_limit(fp32 *pitch_angle)
-..\User\TASK\gimbal_task\gimbal_task.c(82): warning:  #177-D: function "gimbal_debug_send"  was declared but never referenced
-  static void gimbal_debug_send(void);
-..\User\TASK\gimbal_task\gimbal_task.c: 9 warnings, 0 errors
-compiling main.c...
+..\User\TASK\start_task\start_task.c: 1 warning, 0 errors
 linking...
-Program Size: Code=41220 RO-data=3444 RW-data=2456 ZI-data=135240  
+Program Size: Code=40296 RO-data=3444 RW-data=2372 ZI-data=135084  
 FromELF: creating hex file...
-".\Objects\ntos_sentry.axf" - 0 Error(s), 20 Warning(s).
+".\Objects\ntos_sentry.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -98,7 +47,7 @@ Package Vendor: Keil
   D:\Keil v5\ARM\PACK\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:05
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

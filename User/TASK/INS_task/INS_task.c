@@ -33,7 +33,7 @@
 
 #include "AHRS.h"
 
-#include "calibrate_Task.h"
+//#include "calibrate_Task.h"
 #include "pid.h"
 
 #include "FreeRTOSConfig.h"
@@ -386,10 +386,12 @@ static void IMU_Cali_Slove(fp32 gyro[3], fp32 accel[3], fp32 mag[3], mpu6500_rea
 static void IMU_temp_Control(fp32 temp)//温度控制。
 {
     uint16_t tempPWM;
+	fp32 temp_control = 45.0f;
     static uint8_t temp_constant_time = 0 ;
     if (first_temperate)
     {
-        PID_Calc(&imuTempPid, temp, INS_GET_CONTROL_TEMPERATURE());
+        //PID_Calc(&imuTempPid, temp, INS_GET_CONTROL_TEMPERATURE());
+		PID_Calc(&imuTempPid, temp, temp_control);
         if (imuTempPid.out < 0.0f)
         {
             imuTempPid.out = 0.0f;
@@ -400,7 +402,8 @@ static void IMU_temp_Control(fp32 temp)//温度控制。
     else
     {
         //在没有达到设置的温度，一直最大功率加热
-        if (temp > INS_GET_CONTROL_TEMPERATURE())
+        //if (temp > INS_GET_CONTROL_TEMPERATURE())
+		if (temp > temp_control)
         {
             temp_constant_time ++;
             if(temp_constant_time > 200)
